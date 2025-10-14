@@ -318,7 +318,7 @@ export default function Home() {
       });
       router.push(`/#${sectionId}`, { scroll: false });
     }
-    setIsMenuOpen(false); 
+    setIsMenuOpen(false);
   };
 
   const toggleMenu = () => {
@@ -595,7 +595,7 @@ export default function Home() {
             </ul>
           </div>
         </nav>
-        <div className="container flex flex-col justify-center items-start h-[calc(47vh-80px)] sm:h-[calc(100vh-80px)] text-white md:w-1/2">
+        <div className="container flex flex-col justify-center items-start h-[calc(52vh-80px)] sm:h-[calc(100vh-80px)] text-white md:w-1/2">
           <p className="secondary-font text-xl md:text-4xl font-bold mb-2">
             <span className="bg-[#4CAF50] px-1">Stories that inspire.</span>
           </p>
@@ -621,7 +621,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="relative mt-[124vh] bg-white z-50">
+      <main className="relative mt-[48vh] sm:mt-[124vh] bg-white z-50">
         <div
           className="hidden sm:block absolute w-full -top-28 left-0"
           style={{
@@ -667,7 +667,7 @@ export default function Home() {
 
         {/* About Us Section start */}
         <section
-          className="container min-h-auto pt-4 sm:pt-16 relative z-10"
+          className="container min-h-auto pt-6 sm:pt-16 relative z-10"
           style={{ backgroundColor: "#ffffff" }}
           ref={aboutCountRef}
         >
@@ -692,7 +692,7 @@ export default function Home() {
                 title={false}
               />
             </div>
-            <div className="w-full sm:w-[55%] -mt-4 sm:mt-8">
+            <div className="w-full sm:w-[55%] -mt-2 sm:mt-8">
               <p className="primary-font text-md text-center sm:text-left mb-2">
                 <span className="bg-[#4CAF50] text-[#FFFFFF] px-1 uppercase">
                   About Us
@@ -739,7 +739,7 @@ export default function Home() {
 
         {/* Case study start */}
         <section
-          className="min-h-auto mt-4 sm:mt-16 relative z-10"
+          className="min-h-auto mt-8 sm:mt-16 relative z-10"
           style={{ backgroundColor: "#000" }}
         >
           <div className="container py-4 sm:py-16 space-y-4 sm:space-y-16">
@@ -1041,7 +1041,7 @@ export default function Home() {
 
         {/* Difference section start */}
         <section
-          className="container py-4 sm:py-16 min-h-auto relative z-10"
+          className="container py-6 sm:py-16 min-h-auto relative z-10"
           id="difference"
           ref={differenceRef}
         >
@@ -1104,7 +1104,7 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            <div className="w-full sm:w-1/2 pl-0 sm:pl-16 flex items-center pt-4 sm:pt-0">
+            <div className="w-full sm:w-1/2 pl-0 sm:pl-16 flex items-center pt-4 sm:pt-0 pb-2 sm:pb-0">
               {openAccordion !== null && (
                 <div className="relative overflow-hidden w-full h-auto flex-1 image-container">
                   <Image
@@ -1261,7 +1261,7 @@ export default function Home() {
           className="min-h-auto relative z-10"
           style={{ backgroundColor: "#FFFFFF" }}
         >
-          <div className="container py-4 sm:py-16 space-y-4 sm:space-y-16">
+          <div className="container py-6 sm:py-16 space-y-4 sm:space-y-16">
             <div className="w-full">
               <TitleDescription
                 title="Our Work Process"
@@ -1412,7 +1412,7 @@ export default function Home() {
 
         {/* Form start */}
         <section className="min-h-auto relative z-10">
-          <div className="container py-4 sm:py-16 space-y-4 sm:space-y-16">
+          <div className="container py-6 sm:py-16 space-y-4 sm:space-y-16">
             <div className="flex justify-center items-center">
               <div className="flex flex-col md:flex-row bg-white shadow-md rounded-xl border border-gray-300 p-0 sm:p-6 w-full h-auto">
                 <Form />
@@ -1505,10 +1505,10 @@ export default function Home() {
         <div className="container mx-auto">
           <div className="border-t border-gray-400 my-4"></div>
           <div className="py-6 flex items-center justify-center sm:justify-between primary-font text-[14px] text-[#0A142F] flex-wrap">
-            <span className="mb-4 sm:mb-0">
+            <span className="mb-4 sm:mb-0 relative top-10 sm:top-0">
               © 2025 MarketBytes. All rights reserved.
             </span>
-            <div className="flex space-x-8">
+            <div className="flex space-x-8 relative top-10 sm:top-0">
               <a href="#" className="hover:text-gray-800">
                 Terms of Service
               </a>
