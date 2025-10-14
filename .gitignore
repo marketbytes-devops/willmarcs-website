@@ -53,14 +53,3 @@ next-env.d.ts
 # Ignore local data or cache
 .cache/
 *.log
-
-# Large assets (optional safeguard)
-*.mp4
-*.mov
-*.avi
-*.mkv
-*.gif
-*.zip
-*.tar
-*.7z
-*.psd
