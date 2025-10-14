@@ -1548,7 +1548,7 @@ export default function Home() {
                   dots: true,
                   infinite: true,
                   speed: 500,
-                  slidesToShow: 3,
+                  slidesToShow: 3, // Display 3 slides on desktop
                   slidesToScroll: 1,
                   autoplay: true,
                   autoplaySpeed: 5000,
@@ -1556,16 +1556,16 @@ export default function Home() {
                   arrows: false,
                   responsive: [
                     {
-                      breakpoint: 1024,
+                      breakpoint: 1024, // For screens smaller than 1024px (tablets and below)
                       settings: {
-                        slidesToShow: 2,
+                        slidesToShow: 2, // Show 2 slides on tablets
                         slidesToScroll: 1,
                       },
                     },
                     {
-                      breakpoint: 640,
+                      breakpoint: 640, // For screens smaller than 640px (mobile)
                       settings: {
-                        slidesToShow: 1,
+                        slidesToShow: 1, // Show 1 slide on mobile
                         slidesToScroll: 1,
                         dots: true,
                         arrows: false,
