@@ -260,11 +260,13 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 export default function Home() {
   const router = useRouter();
+  const aboutRef = useRef(null);
   const workRef = useRef(null);
   const differenceRef = useRef(null);
   const solutionsRef = useRef(null);
   const aboutCountRef = useRef(null);
   const imageRef = useRef(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [openAccordion, setOpenAccordion] = useState(1);
 
@@ -316,9 +318,31 @@ export default function Home() {
       });
       router.push(`/#${sectionId}`, { scroll: false });
     }
+    setIsMenuOpen(false); 
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   useEffect(() => {
+    gsap.fromTo(
+      aboutRef.current,
+      { opacity: 0, y: 50 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: aboutRef.current,
+          start: "top 80%",
+          end: "bottom 20%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
     gsap.fromTo(
       workRef.current,
       { opacity: 0, y: 50 },
@@ -419,19 +443,20 @@ export default function Home() {
   return (
     <>
       <header
-        className="fixed top-0 w-full h-screen -z-0"
+        className="fixed top-0 w-full h-[450px] sm:h-screen -z-0"
         style={{
           backgroundImage: `url(${playbackGif.src})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
         }}
       >
-        <nav className="py-4 border border-b border-x-0 border-t-0 border-white/50">
+        <nav className="py-4 border border-b border-x-0 border-t-0 border-white/50 z-10 relative">
           <div className="container flex items-center justify-between">
             <div className="flex-shrink-0">
               <Image src={logo} alt="Wilmarcs Logo" width={140} height={40} />
             </div>
-            <ul className="flex justify-center gap-8 flex-grow">
+            {/* Desktop Menu */}
+            <ul className="hidden sm:flex justify-center gap-8 flex-grow">
               <li>
                 <Link
                   href="/#works"
@@ -460,10 +485,13 @@ export default function Home() {
                 </Link>
               </li>
             </ul>
-            <div className="flex-shrink-0">
+            <div className="hidden sm:flex flex-shrink-0">
               <Button
                 text="Talk to a Producer"
-                onClick={() => alert("Contact Producer")}
+                onClick={() => {
+                  alert("Contact Producer");
+                  setIsMenuOpen(false);
+                }}
                 bgColor="rgba(255, 255, 255, 0.3)"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -472,9 +500,102 @@ export default function Home() {
                 hoverTextColor="#FFFFFF"
               />
             </div>
+            {/* Hamburger Icon for Mobile */}
+            <button
+              className="sm:hidden flex items-center justify-center w-10 h-10"
+              onClick={toggleMenu}
+              aria-label="Toggle navigation menu"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3 6H21V8H3V6ZM3 11H21V13H3V11ZM3 16H21V18H3V16Z"
+                  fill="white"
+                />
+              </svg>
+            </button>
+          </div>
+          {/* Mobile Menu */}
+          <div
+            className={`fixed top-0 right-0 h-screen w-full bg-black/90 z-20 transform transition-transform duration-300 ease-in-out ${
+              isMenuOpen ? "translate-x-0" : "translate-x-full"
+            }`}
+          >
+            <div className="flex justify-end p-4">
+              <button
+                onClick={toggleMenu}
+                className="w-10 h-10 flex items-center justify-center"
+                aria-label="Close navigation menu"
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M18 6L6 18M6 6L18 18"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <ul className="flex flex-col items-center justify-center h-full space-y-8">
+              <li>
+                <Link
+                  href="/#works"
+                  onClick={() => scrollToSection(workRef, "works")}
+                  className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
+                >
+                  Works
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#difference"
+                  onClick={() => scrollToSection(differenceRef, "difference")}
+                  className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
+                >
+                  Difference
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#solutions"
+                  onClick={() => scrollToSection(solutionsRef, "solutions")}
+                  className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
+                >
+                  Solutions
+                </Link>
+              </li>
+              <li>
+                <Button
+                  text="Talk to a Producer"
+                  onClick={() => {
+                    alert("Contact Producer");
+                    setIsMenuOpen(false);
+                  }}
+                  bgColor="rgba(255, 255, 255, 0.3)"
+                  fontSize="lg"
+                  textColor="#FFFFFF"
+                  border="1px solid #FFFFFF"
+                  hoverBgColor="#000"
+                  hoverTextColor="#FFFFFF"
+                />
+              </li>
+            </ul>
           </div>
         </nav>
-        <div className="container flex flex-col justify-center items-start h-[calc(100vh-80px)] text-white md:w-1/2">
+        <div className="container flex flex-col justify-center items-start h-[calc(47vh-80px)] sm:h-[calc(100vh-80px)] text-white md:w-1/2">
           <p className="secondary-font text-xl md:text-4xl font-bold mb-2">
             <span className="bg-[#4CAF50] px-1">Stories that inspire.</span>
           </p>
@@ -516,7 +637,7 @@ export default function Home() {
 
         {/* Trusted by international names start */}
         <section
-          className="container min-h-auto pt-[2vh] ms:pt-[4vh] relative z-10"
+          className="container min-h-auto pt-[2vh] sm:pt-[4vh] relative z-10"
           style={{ backgroundColor: "#ffffff" }}
         >
           <TitleDescription
@@ -670,7 +791,7 @@ export default function Home() {
 
               <div className="w-full sm:w-[55%] -mt-4 sm:mt-8 ml-0 sm:ml-16">
                 <TitleDescription
-                  title="Himalaya Wellness –Mangrove Restoration Film"
+                  title="Himalaya Wellness – Mangrove Restoration Film"
                   titleClass="mb-6 text-white text-center sm:text-left"
                   description={false}
                 />
@@ -698,19 +819,7 @@ export default function Home() {
                     },
                   ].map((item, index) => (
                     <li key={index} className="flex items-start">
-                      <input
-                        type="checkbox"
-                        readOnly
-                        className="
-                          appearance-none w-5 h-5 mt-1 mr-3 border-2 border-white 
-                          rounded-md bg-transparent checked:bg-transparent checked:border-gray-400 
-                          flex-shrink-0 transition-all duration-200 cursor-default
-                          relative
-                          before:content-['✓'] before:absolute before:text-white 
-                          before:font-bold before:text-sm before:top-[-2px] before:left-[4px]
-                          checked:before:opacity-100 before:opacity-0
-                        "
-                      />
+                      <div className="relative top-2 min-w-3 min-h-3 mr-3 flex items-center justify-center border-2 border-white rounded text-white text-sm font-bold" />
                       <p className="primary-font text-base md:text-[18px]">
                         <span className="font-bold">{item.label}</span>{" "}
                         {item.text}
@@ -753,19 +862,7 @@ export default function Home() {
                     },
                   ].map((item, index) => (
                     <li key={index} className="flex items-start">
-                      <input
-                        type="checkbox"
-                        readOnly
-                        className="
-                          appearance-none w-5 h-5 mt-1 mr-3 border-2 border-white 
-                          rounded-md bg-transparent checked:bg-transparent checked:border-gray-400 
-                          flex-shrink-0 transition-all duration-200 cursor-default
-                          relative
-                          before:content-['✓'] before:absolute before:text-white 
-                          before:font-bold before:text-sm before:top-[-2px] before:left-[4px]
-                          checked:before:opacity-100 before:opacity-0
-                        "
-                      />
+                      <div className="relative top-2 min-w-3 min-h-3 mr-3 flex items-center justify-center border-2 border-white rounded text-white text-sm font-bold" />
                       <p className="primary-font text-base md:text-[18px]">
                         <span className="font-bold">{item.label}</span>{" "}
                         {item.text}
@@ -1045,6 +1142,7 @@ export default function Home() {
         <section
           className="relative z-10 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${whatWeDoBg.src})` }}
+          ref={aboutRef}
         >
           <div className="bg-black/50">
             <div className="container mx-auto py-12 sm:py-20 px-4">
@@ -1172,7 +1270,7 @@ export default function Home() {
               />
             </div>
             <div className="mx-4">
-                <Progress/>
+              <Progress />
             </div>
           </div>
         </section>
@@ -1249,7 +1347,7 @@ export default function Home() {
 
         {/* FAQs start */}
         <section
-          className="min-h-auto relative z-10"
+          className="min-h-auto relative z-10 mt-6 sm:mt-0"
           style={{ backgroundColor: "#F6EDD9" }}
         >
           <div className="container py-4 sm:py-16 space-y-4 sm:space-y-16">
@@ -1347,21 +1445,37 @@ export default function Home() {
         }}
       >
         <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 justify-between items-center">
-          <div className="py-6 flex items-center justify-start primay-font text-[16px] text-[#0A142F] space-x-8">
-            <a href="#" className="hover:text-gray-800">
+          <div className="py-6 flex items-center justify-center sm:justify-start primary-font text-[16px] text-[#0A142F] space-x-8">
+            <Link
+              href="/#about"
+              onClick={() => scrollToSection(aboutRef, "about")}
+              className="hover:text-gray-800"
+            >
               About us
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link
+              href="/#difference"
+              onClick={() => scrollToSection(differenceRef, "difference")}
+              className="hover:text-gray-800"
+            >
               Difference
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link
+              href="/#works"
+              onClick={() => scrollToSection(workRef, "works")}
+              className="hover:text-gray-800"
+            >
               Work
-            </a>
-            <a href="#" className="hover:text-gray-800">
+            </Link>
+            <Link
+              href="/#solutions"
+              onClick={() => scrollToSection(solutionsRef, "solutions")}
+              className="hover:text-gray-800"
+            >
               Solutions
-            </a>
+            </Link>
           </div>
-          <div className="flex items-center justify-end space-x-8">
+          <div className="flex items-center justify-center sm:justify-end space-x-8">
             <a
               href="#"
               className="hover:scale-[1.1] transition-all duration-300"
@@ -1390,8 +1504,10 @@ export default function Home() {
         </div>
         <div className="container mx-auto">
           <div className="border-t border-gray-400 my-4"></div>
-          <div className="py-6 flex justify-between items-center primary-font text-[14px] text-[#0A142F] flex-wrap">
-            <span>© 2025 MarketBytes. All rights reserved.</span>
+          <div className="py-6 flex items-center justify-center sm:justify-between primary-font text-[14px] text-[#0A142F] flex-wrap">
+            <span className="mb-4 sm:mb-0">
+              © 2025 MarketBytes. All rights reserved.
+            </span>
             <div className="flex space-x-8">
               <a href="#" className="hover:text-gray-800">
                 Terms of Service
