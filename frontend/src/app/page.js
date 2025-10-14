@@ -95,6 +95,7 @@ import differenceImage3 from "@/assets/images/diff-3.png";
 import differenceImage4 from "@/assets/images/diff-4.jpg";
 import differenceImage5 from "@/assets/images/diff-5.png";
 import differenceImage6 from "@/assets/images/diff-6.png";
+
 import differenceIcon1 from "@/assets/svg/Simplification.svg";
 import differenceIcon2 from "@/assets/svg/Boardroom.svg";
 import differenceIcon3 from "@/assets/svg/Glyph.svg";
@@ -107,6 +108,7 @@ const accordianDifference = [
     id: 1,
     icon: differenceIcon1,
     image: differenceImage1,
+    differenceVideo: "/videos/Cinema-Quality-Corporate-Speed.mp4",
     title: "Cinema Quality. Corporate Speed.",
     description: "Cinema Quality. Corporate Speed.",
     caption: "Films that look like cinema, delivered at the pace of business",
@@ -115,6 +117,7 @@ const accordianDifference = [
     id: 2,
     icon: differenceIcon2,
     image: differenceImage2,
+    differenceVideo: "/videos/from-brief-to-boardrooom.mp4",
     title: "From Brief to Boardroom—Seamless Delivery",
     description: "From Brief to Boardroom—Seamless Delivery",
     caption:
@@ -124,6 +127,7 @@ const accordianDifference = [
     id: 3,
     icon: differenceIcon3,
     image: differenceImage3,
+    differenceVideo: "/videos/trusted-by-global-brands.mp4",
     title: "Trusted by Global Brands, Tailored for Local CSR Stories",
     description: "Trusted by Global Brands, Tailored for Local CSR Stories",
     caption:
@@ -133,6 +137,7 @@ const accordianDifference = [
     id: 4,
     icon: differenceIcon4,
     image: differenceImage4,
+    differenceVideo: "/videos/Pan.mp4",
     title: "Pan-India Execution, Global Standards",
     description: "Pan-India Execution, Global Standards",
     caption: "Crews across 20+ states, remote/forest/coastal shoots.",
@@ -141,6 +146,7 @@ const accordianDifference = [
     id: 5,
     icon: differenceIcon5,
     image: differenceImage5,
+    differenceVideo: "/videos/Faster-Cuts.mp4",
     title: "Faster Cuts, Smarter Workflows",
     description: "Faster Cuts, Smarter Workflows",
     caption:
@@ -150,6 +156,7 @@ const accordianDifference = [
     id: 6,
     icon: differenceIcon6,
     image: differenceImage6,
+    differenceVideo: "/videos/Compliance.mp4",
     title: "Compliance & Consent Assured",
     description: "Compliance & Consent Assured",
     caption:
@@ -267,8 +274,11 @@ export default function Home() {
   const aboutCountRef = useRef(null);
   const imageRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const [openAccordion, setOpenAccordion] = useState(1);
+  const [playingVideo, setPlayingVideo] = useState(null);
+  const [playingVideoId, setPlayingVideoId] = useState(null);
+  const [playingHimalayaVideo, setPlayingHimalayaVideo] = useState(false);
+  const [playingAkshayaVideo, setPlayingAkshayaVideo] = useState(false);
 
   const toggleAccordion = (id) => {
     if (openAccordion === id) {
@@ -279,10 +289,12 @@ export default function Home() {
           ease: "power2.out",
           onComplete: () => {
             setOpenAccordion(null);
+            setPlayingVideoId(null);
           },
         });
       } else {
         setOpenAccordion(null);
+        setPlayingVideoId(null);
       }
     } else {
       if (openAccordion !== null && imageRef.current) {
@@ -292,10 +304,12 @@ export default function Home() {
           ease: "power2.out",
           onComplete: () => {
             setOpenAccordion(id);
+            setPlayingVideoId(id);
           },
         });
       } else {
         setOpenAccordion(id);
+        setPlayingVideoId(id);
       }
     }
   };
@@ -323,6 +337,21 @@ export default function Home() {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const playVideo = (index, videoUrl) => {
+    setPlayingVideo(index);
+  };
+
+  const stopVideo = () => {
+    setPlayingVideo(null);
+  };
+
+  const getYouTubeEmbedUrl = (url) => {
+    const videoId = url.match(
+      /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&]+)/
+    )?.[1];
+    return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : "";
   };
 
   useEffect(() => {
@@ -522,7 +551,7 @@ export default function Home() {
           </div>
           {/* Mobile Menu */}
           <div
-            className={`fixed top-0 right-0 h-screen w-full bg-black/90 z-20 transform transition-transform duration-300 ease-in-out ${
+            className={`z-20 fixed top-0 right-0 h-screen w-full bg-black/90 transform transition-transform duration-300 ease-in-out ${
               isMenuOpen ? "translate-x-0" : "translate-x-full"
             }`}
           >
@@ -549,7 +578,7 @@ export default function Home() {
                 </svg>
               </button>
             </div>
-            <ul className="flex flex-col items-center justify-center h-full space-y-8">
+            <ul className="flex flex-col items-center justify-center h-auto space-y-8">
               <li>
                 <Link
                   href="/#works"
@@ -678,14 +707,58 @@ export default function Home() {
                 titleClass="mb-6 text-black text-center sm:text-left"
                 description={false}
               />
-              <Image
-                src={aboutImage}
-                className="rounded-xl"
-                alt="Transforming Ideas Into Visual Excellence"
-                width="auto"
-                height={400}
-                style={{ objectFit: "contain" }}
-              />
+              <div className="relative w-full h-[300px] rounded-xl overflow-hidden">
+                {playingVideo === "about" ? (
+                  <div className="relative w-full h-full">
+                    <iframe
+                      src="https://www.youtube.com/embed/gwkQYgElMtQ?autoplay=1"
+                      title="See the work in 60 seconds"
+                      className="w-full h-full"
+                      frameBorder="0"
+                      allow="autoplay; encrypted-media"
+                      allowFullScreen
+                    ></iframe>
+                    <button
+                      onClick={() => setPlayingVideo(null)}
+                      className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
+                      aria-label="Close video"
+                    >
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M18 6L6 18M6 6L18 18"
+                          stroke="white"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <Image
+                      src={aboutImage}
+                      className="cursor-pointer rounded-xl w-full h-full object-cover transition-transform duration-300"
+                      alt="Transforming Ideas Into Visual Excellence"
+                      width="auto"
+                      height={400}
+                      onClick={() => setPlayingVideo("about")}
+                      aria-label="Play video"
+                    />
+                    <div
+                      className="cursor-pointer absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-70 rounded-xl"
+                      onClick={() => setPlayingVideo("about")}
+                      aria-label="Play video"
+                    ></div>
+                  </>
+                )}
+              </div>
               <TitleDescription
                 description="From CSR documentaries to corporate events and brand films—watch how leading organisations trust us with their stories."
                 descriptionClass="mt-3 text-[#555555]"
@@ -755,37 +828,74 @@ export default function Home() {
             {/* Himalaya Wellness */}
             <div className="flex flex-col sm:flex-row items-center justify-center w-full gap-8 rounded-xl p-4 sm:p-8 bg-[#1B1B1BB2]">
               <div className="w-full sm:w-[45%]">
-                <div className="relative w-fit bg-white rounded-xl group">
-                  <Image
-                    src={himalayaImage}
-                    alt="Himalaya Wellness – Mangrove Restoration Film"
-                    width="auto"
-                    height={400}
-                    className="rounded-xl transform rotate-3 transition-all duration-300 group-hover:rotate-0"
-                    style={{ objectFit: "contain" }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg
-                      width="60"
-                      height="60"
-                      viewBox="0 0 91 92"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M45.4999 0.126709C20.371 0.126709 0 20.4977 0 45.6266C0 70.7555 20.371 91.1265 45.4999 91.1265C70.6288 91.1265 90.9998 70.7555 90.9998 45.6266C90.9732 20.509 70.6178 0.15356 45.4999 0.126709ZM63.2026 48.5354C63.8346 48.2205 64.3467 47.7082 64.6617 47.0764C65.4624 45.4699 64.8091 43.5186 63.2026 42.718L37.2027 29.7179C36.7512 29.4923 36.2532 29.375 35.7484 29.3752C33.9534 29.3761 32.4991 30.8318 32.4999 32.6268V58.6267C32.497 59.1368 32.6145 59.6407 32.8426 60.0972C33.6451 61.7029 35.597 62.3539 37.2027 61.5517L63.2026 48.5516V48.5354Z"
-                        fill="black"
-                        fillOpacity="0.43"
+                <div className="relative w-full h-full bg-white rounded-xl group">
+                  {playingHimalayaVideo ? (
+                    <div className="relative w-full h-full">
+                      <iframe
+                        src="https://www.youtube.com/embed/tzIq68pUFRU?autoplay=1"
+                        title="Himalaya Wellness – Mangrove Restoration Film"
+                        className="w-full h-auto sm:h-[350px] rounded-xl"
+                        frameBorder="0"
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
                       />
-                      <path
-                        d="M64.6617 47.0764C64.3467 47.7082 63.8346 48.2205 63.2026 48.5354V48.5516L37.2027 61.5517C35.597 62.3539 33.6451 61.7029 32.8426 60.0972C32.6145 59.6407 32.497 59.1368 32.4999 58.6267V32.6268C32.4991 30.8318 33.9534 29.3761 35.7484 29.3752C36.2532 29.375 36.7512 29.4923 37.2027 29.7179L63.2026 42.718C64.8091 43.5186 65.4624 45.4699 64.6617 47.0764Z"
-                        fill="white"
+                      <button
+                        onClick={() => setPlayingHimalayaVideo(false)}
+                        className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
+                        aria-label="Close video"
+                      >
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M18 6L6 18M6 6L18 18"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <Image
+                        src={himalayaImage}
+                        alt="Himalaya Wellness – Mangrove Restoration Film"
+                        width="auto"
+                        height={400}
+                        className="rounded-xl transform rotate-3 transition-all duration-300 group-hover:rotate-0"
+                        style={{ objectFit: "contain" }}
                       />
-                    </svg>
-                  </div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <svg
+                          width="60"
+                          height="60"
+                          viewBox="0 0 91 92"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110 cursor-pointer"
+                          onClick={() => setPlayingHimalayaVideo(true)}
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M45.4999 0.126709C20.371 0.126709 0 20.4977 0 45.6266C0 70.7555 20.371 91.1265 45.4999 91.1265C70.6288 91.1265 90.9998 70.7555 90.9998 45.6266C90.9732 20.509 70.6178 0.15356 45.4999 0.126709ZM63.2026 48.5354C63.8346 48.2205 64.3467 47.7082 64.6617 47.0764C65.4624 45.4699 64.8091 43.5186 63.2026 42.718L37.2027 29.7179C36.7512 29.4923 36.2532 29.375 35.7484 29.3752C33.9534 29.3761 32.4991 30.8318 32.4999 32.6268V58.6267C32.497 59.1368 32.6145 59.6407 32.8426 60.0972C33.6451 61.7029 35.597 62.3539 37.2027 61.5517L63.2026 48.5516V48.5354Z"
+                            fill="black"
+                            fillOpacity="0.43"
+                          />
+                          <path
+                            d="M64.6617 47.0764C64.3467 47.7082 63.8346 48.2205 63.2026 48.5354V48.5516L37.2027 61.5517C35.597 62.3539 33.6451 61.7029 32.8426 60.0972C32.6145 59.6407 32.497 59.1368 32.4999 58.6267V32.6268C32.4991 30.8318 33.9534 29.3761 35.7484 29.3752C36.2532 29.375 36.7512 29.4923 37.2027 29.7179L63.2026 42.718C64.8091 43.5186 65.4624 45.4699 64.6617 47.0764Z"
+                            fill="white"
+                          />
+                        </svg>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -873,37 +983,74 @@ export default function Home() {
               </div>
 
               <div className="w-full sm:w-[45%] -mt-4 sm:mt-8">
-                <div className="relative w-fit bg-white rounded-xl group">
-                  <Image
-                    src={akshayaPathraImage}
-                    className="rounded-xl transform rotate-3 transition-all duration-300 group-hover:rotate-0"
-                    alt="Akshaya Patra – Nationwide Documentary"
-                    width="auto"
-                    height={400}
-                    style={{ objectFit: "contain" }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg
-                      width="60"
-                      height="60"
-                      viewBox="0 0 91 92"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M45.4999 0.126709C20.371 0.126709 0 20.4977 0 45.6266C0 70.7555 20.371 91.1265 45.4999 91.1265C70.6288 91.1265 90.9998 70.7555 90.9998 45.6266C90.9732 20.509 70.6178 0.15356 45.4999 0.126709ZM63.2026 48.5354C63.8346 48.2205 64.3467 47.7082 64.6617 47.0764C65.4624 45.4699 64.8091 43.5186 63.2026 42.718L37.2027 29.7179C36.7512 29.4923 36.2532 29.375 35.7484 29.3752C33.9534 29.3761 32.4991 30.8318 32.4999 32.6268V58.6267C32.497 59.1368 32.6145 59.6407 32.8426 60.0972C33.6451 61.7029 35.597 62.3539 37.2027 61.5517L63.2026 48.5516V48.5354Z"
-                        fill="black"
-                        fillOpacity="0.43"
+                <div className="relative w-full h-full bg-white rounded-xl group">
+                  {playingAkshayaVideo ? (
+                    <div className="relative w-full h-full">
+                      <iframe
+                        src="https://www.youtube.com/embed/aVyfbWWIK6w?autoplay=1"
+                        title="Akshaya Patra – Nationwide Documentary (UN Showcase)"
+                        className="w-full h-auto sm:h-[350px] rounded-xl"
+                        frameBorder="0"
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
                       />
-                      <path
-                        d="M64.6617 47.0764C64.3467 47.7082 63.8346 48.2205 63.2026 48.5354V48.5516L37.2027 61.5517C35.597 62.3539 33.6451 61.7029 32.8426 60.0972C32.6145 59.6407 32.497 59.1368 32.4999 58.6267V32.6268C32.4991 30.8318 33.9534 29.3761 35.7484 29.3752C36.2532 29.375 36.7512 29.4923 37.2027 29.7179L63.2026 42.718C64.8091 43.5186 65.4624 45.4699 64.6617 47.0764Z"
-                        fill="white"
+                      <button
+                        onClick={() => setPlayingAkshayaVideo(false)}
+                        className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
+                        aria-label="Close video"
+                      >
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M18 6L6 18M6 6L18 18"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <Image
+                        src={akshayaPathraImage}
+                        className="rounded-xl transform rotate-3 transition-all duration-300 group-hover:rotate-0"
+                        alt="Akshaya Patra – Nationwide Documentary"
+                        width="auto"
+                        height={400}
+                        style={{ objectFit: "contain" }}
                       />
-                    </svg>
-                  </div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <svg
+                          width="60"
+                          height="60"
+                          viewBox="0 0 91 92"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110 cursor-pointer"
+                          onClick={() => setPlayingAkshayaVideo(true)}
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M45.4999 0.126709C20.371 0.126709 0 20.4977 0 45.6266C0 70.7555 20.371 91.1265 45.4999 91.1265C70.6288 91.1265 90.9998 70.7555 90.9998 45.6266C90.9732 20.509 70.6178 0.15356 45.4999 0.126709ZM63.2026 48.5354C63.8346 48.2205 64.3467 47.7082 64.6617 47.0764C65.4624 45.4699 64.8091 43.5186 63.2026 42.718L37.2027 29.7179C36.7512 29.4923 36.2532 29.375 35.7484 29.3752C33.9534 29.3761 32.4991 30.8318 32.4999 32.6268V58.6267C32.497 59.1368 32.6145 59.6407 32.8426 60.0972C33.6451 61.7029 35.597 62.3539 37.2027 61.5517L63.2026 48.5516V48.5354Z"
+                            fill="black"
+                            fillOpacity="0.43"
+                          />
+                          <path
+                            d="M64.6617 47.0764C64.3467 47.7082 63.8346 48.2205 63.2026 48.5354V48.5516L37.2027 61.5517C35.597 62.3539 33.6451 61.7029 32.8426 60.0972C32.6145 59.6407 32.497 59.1368 32.4999 58.6267V32.6268C32.4991 30.8318 33.9534 29.3761 35.7484 29.3752C36.2532 29.375 36.7512 29.4923 37.2027 29.7179L63.2026 42.718C64.8091 43.5186 65.4624 45.4699 64.6617 47.0764Z"
+                            fill="white"
+                          />
+                        </svg>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -948,68 +1095,116 @@ export default function Home() {
                   image: ourWorkImage1,
                   title: "Himalaya – One Million Trees",
                   description: "CSR Documentary",
+                  videoUrl: "https://youtu.be/yPAIfXl5xN8",
                 },
                 {
                   image: ourWorkImage2,
                   title: "Mangrove Day",
                   description: "CSR Documentary",
+                  videoUrl: "https://youtu.be/tzIq68pUFRU",
                 },
                 {
                   image: ourWorkImage3,
                   title: "Kissan Mitra Signature Film On Farmer",
                   description: "CSR Documentary",
+                  videoUrl: "https://youtu.be/hjDlwEG7fQU",
                 },
                 {
                   image: ourWorkImage4,
                   title: "Himalaya Mural Video",
                   description: "CSR Documentary",
+                  videoUrl: "https://www.youtube.com/watch?v=er_q-iqBugE",
                 },
                 {
                   image: ourWorkImage5,
                   title: "TESCO",
                   description: "CSR Documentary",
+                  videoUrl: "https://youtu.be/abDdPdJ16Mc",
                 },
                 {
                   image: ourWorkImage6,
                   title: "Manal Student Stories",
                   description: "CSR Documentary",
+                  videoUrl: "https://youtu.be/7cXdx2Tc75s",
                 },
               ].map((item, index) => (
                 <div
                   key={index}
-                  className="relative w-fit p-3 bg-white rounded-xl group hover:shadow-xl transition-all duration-300 border border-gray-300"
+                  className="relative w-full p-3 bg-white rounded-xl group hover:shadow-xl transition-all duration-300 border border-gray-300"
                 >
                   <div className="relative w-auto h-[300px] rounded-xl overflow-hidden">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      width="auto"
-                      height={400}
-                      className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-[1.05]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-70 rounded-xl"></div>
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg
-                      width="60"
-                      height="60"
-                      viewBox="0 0 91 92"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110 relative -top-10"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M45.4999 0.126709C20.371 0.126709 0 20.4977 0 45.6266C0 70.7555 20.371 91.1265 45.4999 91.1265C70.6288 91.1265 90.9998 70.7555 90.9998 45.6266C90.9732 20.509 70.6178 0.15356 45.4999 0.126709ZM63.2026 48.5354C63.8346 48.2205 64.3467 47.7082 64.6617 47.0764C65.4624 45.4699 64.8091 43.5186 63.2026 42.718L37.2027 29.7179C36.7512 29.4923 36.2532 29.375 35.7484 29.3752C33.9534 29.3761 32.4991 30.8318 32.4999 32.6268V58.6267C32.497 59.1368 32.6145 59.6407 32.8426 60.0972C33.6451 61.7029 35.597 62.3539 37.2027 61.5517L63.2026 48.5516V48.5354Z"
-                        fill="black"
-                        fillOpacity="0.43"
-                      />
-                      <path
-                        d="M64.6617 47.0764C64.3467 47.7082 63.8346 48.2205 63.2026 48.5354V48.5516L37.2027 61.5517C35.597 62.3539 33.6451 61.7029 32.8426 60.0972C32.6145 59.6407 32.497 59.1368 32.4999 58.6267V32.6268C32.4991 30.8318 33.9534 29.3761 35.7484 29.3752C36.2532 29.375 36.7512 29.4923 37.2027 29.7179L63.2026 42.718C64.8091 43.5186 65.4624 45.4699 64.6617 47.0764Z"
-                        fill="white"
-                      />
-                    </svg>
+                    {playingVideo === index ? (
+                      <div className="relative w-full h-full">
+                        <iframe
+                          src={getYouTubeEmbedUrl(item.videoUrl)}
+                          title={item.title}
+                          className="w-full h-full"
+                          frameBorder="0"
+                          allow="autoplay; encrypted-media"
+                          allowFullScreen
+                        ></iframe>
+                        <button
+                          onClick={stopVideo}
+                          className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
+                          aria-label="Close video"
+                        >
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M18 6L6 18M6 6L18 18"
+                              stroke="white"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <Image
+                          src={item.image}
+                          alt={item.title}
+                          width="auto"
+                          height={400}
+                          className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-[1.05]"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-70 rounded-xl"></div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <button
+                            onClick={() => playVideo(index, item.videoUrl)}
+                            className="relative top-10 cursor-pointer"
+                            aria-label={`Play ${item.title} video`}
+                          >
+                            <svg
+                              width="60"
+                              height="60"
+                              viewBox="0 0 91 92"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110 relative -top-10"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                clipRule="evenodd"
+                                d="M45.4999 0.126709C20.371 0.126709 0 20.4977 0 45.6266C0 70.7555 20.371 91.1265 45.4999 91.1265C70.6288 91.1265 90.9998 70.7555 90.9998 45.6266C90.9732 20.509 70.6178 0.15356 45.4999 0.126709ZM63.2026 48.5354C63.8346 48.2205 64.3467 47.7082 64.6617 47.0764C65.4624 45.4699 64.8091 43.5186 63.2026 42.718L37.2027 29.7179C36.7512 29.4923 36.2532 29.375 35.7484 29.3752C33.9534 29.3761 32.4991 30.8318 32.4999 32.6268V58.6267C32.497 59.1368 32.6145 59.6407 32.8426 60.0972C33.6451 61.7029 35.597 62.3539 37.2027 61.5517L63.2026 48.5516V48.5354Z"
+                                fill="black"
+                                fillOpacity="0.43"
+                              />
+                              <path
+                                d="M64.6617 47.0764C64.3467 47.7082 63.8346 48.2205 63.2026 48.5354V48.5516L37.2027 61.5517C35.597 62.3539 33.6451 61.7029 32.8426 60.0972C32.6145 59.6407 32.497 59.1368 32.4999 58.6267V32.6268C32.4991 30.8318 33.9534 29.3761 35.7484 29.3752C36.2532 29.375 36.7512 29.4923 37.2027 29.7179L63.2026 42.718C64.8091 43.5186 65.4624 45.4699 64.6617 47.0764Z"
+                                fill="white"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                   <div className="py-4">
                     <h3 className="primary-font text-base md:text-[18px] font-bold">
@@ -1106,31 +1301,97 @@ export default function Home() {
             </div>
             <div className="w-full sm:w-1/2 pl-0 sm:pl-16 flex items-center pt-4 sm:pt-0 pb-2 sm:pb-0">
               {openAccordion !== null && (
-                <div className="relative overflow-hidden w-full h-auto flex-1 image-container">
-                  <Image
-                    src={
-                      accordianDifference.find(
-                        (item) => item.id === openAccordion
-                      ).image
-                    }
-                    alt={
-                      accordianDifference.find(
-                        (item) => item.id === openAccordion
-                      ).title
-                    }
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    className="object-cover w-full h-full rounded-xl"
-                    ref={imageRef}
-                  />
-                  <h4 className="w-full rounded-b-xl absolute bottom-0 p-8 bg-black/70 text-white text-[24px] font-semibold">
-                    {
-                      accordianDifference.find(
-                        (item) => item.id === openAccordion
-                      ).caption
-                    }
-                  </h4>
+                <div
+                  ref={imageRef}
+                  className="relative overflow-hidden w-full h-auto sm:h-[510px] rounded-xl"
+                >
+                  {playingVideoId === openAccordion ? (
+                    <div className="relative w-full h-full">
+                      <video
+                        src={
+                          accordianDifference.find(
+                            (item) => item.id === openAccordion
+                          ).differenceVideo
+                        }
+                        className="w-full h-full object-cover rounded-xl"
+                        controls
+                        autoPlay
+                        muted
+                        onEnded={() => setPlayingVideoId(null)}
+                      />
+                      <button
+                        onClick={() => setPlayingVideoId(null)}
+                        className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
+                        aria-label="Close video"
+                      >
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M18 6L6 18M6 6L18 18"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <Image
+                        src={
+                          accordianDifference.find(
+                            (item) => item.id === openAccordion
+                          ).image
+                        }
+                        alt={
+                          accordianDifference.find(
+                            (item) => item.id === openAccordion
+                          ).title
+                        }
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        className="object-cover w-full h-full rounded-xl cursor-pointer"
+                        onClick={() => setPlayingVideoId(openAccordion)}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <svg
+                          width="60"
+                          height="60"
+                          viewBox="0 0 91 92"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="transition-all duration-300 opacity-70 hover:opacity-100 hover:scale-110 cursor-pointer"
+                          onClick={() => setPlayingVideoId(openAccordion)}
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M45.4999 0.126709C20.371 0.126709 0 20.4977 0 45.6266C0 70.7555 20.371 91.1265 45.4999 91.1265C70.6288 91.1265 90.9998 70.7555 90.9998 45.6266C90.9732 20.509 70.6178 0.15356 45.4999 0.126709ZM63.2026 48.5354C63.8346 48.2205 64.3467 47.7082 64.6617 47.0764C65.4624 45.4699 64.8091 43.5186 63.2026 42.718L37.2027 29.7179C36.7512 29.4923 36.2532 29.375 35.7484 29.3752C33.9534 29.3761 32.4991 30.8318 32.4999 32.6268V58.6267C32.497 59.1368 32.6145 59.6407 32.8426 60.0972C33.6451 61.7029 35.597 62.3539 37.2027 61.5517L63.2026 48.5516V48.5354Z"
+                            fill="black"
+                            fillOpacity="0.43"
+                          />
+                          <path
+                            d="M64.6617 47.0764C64.3467 47.7082 63.8346 48.2205 63.2026 48.5354V48.5516L37.2027 61.5517C35.597 62.3539 33.6451 61.7029 32.8426 60.0972C32.6145 59.6407 32.497 59.1368 32.4999 58.6267V32.6268C32.4991 30.8318 33.9534 29.3761 35.7484 29.3752C36.2532 29.375 36.7512 29.4923 37.2027 29.7179L63.2026 42.718C64.8091 43.5186 65.4624 45.4699 64.6617 47.0764Z"
+                            fill="white"
+                          />
+                        </svg>
+                      </div>
+                      <h4 className="w-full rounded-b-xl absolute bottom-0 p-8 bg-black/70 text-white text-[24px] font-semibold">
+                        {
+                          accordianDifference.find(
+                            (item) => item.id === openAccordion
+                          ).caption
+                        }
+                      </h4>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -1256,7 +1517,7 @@ export default function Home() {
         </section>
         {/* Visual Experiences end */}
 
-        {/* Our work progress start */}
+        {/* Our work process start */}
         <section
           className="min-h-auto relative z-10"
           style={{ backgroundColor: "#FFFFFF" }}
