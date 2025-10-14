@@ -202,33 +202,6 @@ const testimonials = [
   },
 ];
 
-const settings = {
-  dots: true,
-  infinite: true,
-  speed: 500,
-  slidesToShow: 3,
-  slidesToScroll: 1,
-  autoplay: true,
-  autoplaySpeed: 5000,
-  pauseOnHover: true,
-  responsive: [
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 2,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 640,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-      },
-    },
-  ],
-};
-
 import vilmarcsMotionPictures from "@/assets/images/vilmarcs-motion-pictures.png";
 
 import hourseFooterLogo from "@/assets/images/hourse-footer.png";
@@ -488,6 +461,40 @@ export default function Home() {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, [openAccordion]);
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 360,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
   return (
     <>
@@ -813,7 +820,9 @@ export default function Home() {
                 <Button
                   text="Start Your Project"
                   icon={true}
-                  onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
+                  onClick={() =>
+                    scrollToSection(ReadyToRollRef, "ready-to-roll")
+                  }
                   bgColor="#000"
                   fontSize="md"
                   textColor="#FFFFFF"
@@ -1689,7 +1698,11 @@ export default function Home() {
         {/* FAQs end */}
 
         {/* Form start */}
-        <section className="min-h-auto relative z-10" id="ready-to-roll" ref={ReadyToRollRef}>
+        <section
+          className="min-h-auto relative z-10"
+          id="ready-to-roll"
+          ref={ReadyToRollRef}
+        >
           <div className="container py-6 sm:py-16 space-y-4 sm:space-y-16">
             <div className="flex justify-center items-center">
               <div className="flex flex-col md:flex-row bg-white shadow-md rounded-xl border border-gray-300 p-0 sm:p-6 w-full h-auto">
@@ -1754,7 +1767,7 @@ export default function Home() {
             </Link>
           </div>
           <div className="flex items-center justify-center sm:justify-end space-x-8">
-           <a
+            <a
               href="https://www.instagram.com/wilmarcsmotionpictures/"
               className="hover:scale-[1.1] transition-all duration-300"
             >
@@ -1787,10 +1800,16 @@ export default function Home() {
               © 2025 MarketBytes. All rights reserved.
             </span>
             <div className="flex space-x-8 relative top-10 sm:top-0">
-              <a href="https://wilmarcs.com/privacy-policy-for-wilmarcs-motion-pictures/" className="hover:text-gray-800">
+              <a
+                href="https://wilmarcs.com/privacy-policy-for-wilmarcs-motion-pictures/"
+                className="hover:text-gray-800"
+              >
                 Terms of Service
               </a>
-              <a href="https://wilmarcs.com/terms-conditions/" className="hover:text-gray-800">
+              <a
+                href="https://wilmarcs.com/terms-conditions/"
+                className="hover:text-gray-800"
+              >
                 Privacy Policy
               </a>
             </div>
