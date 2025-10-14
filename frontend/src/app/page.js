@@ -14,7 +14,7 @@ import TitleDescription from "@/components/TitleDescription";
 import Form from "@/components/Form";
 
 import logo from "@/assets/images/logo.png";
-import playbackGif from "@/assets/gif/header-gif.gif";
+import playbackGif from "@/assets/gifs/header-gif.gif";
 import ellipseSvg from "@/assets/svg/Ellipse.svg";
 
 import client1 from "@/assets/images/accel.png";
