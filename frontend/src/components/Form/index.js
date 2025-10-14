@@ -8,7 +8,7 @@ const Form = () => {
         Ready to Roll?
       </h2>
       <p className="primary-font text-base md:text-[18px] text-[#555555] mb-4 max-w-full sm:max-w-md">
-        Tell us your idea today. We'll be ready to shoot in hours not weeks.
+        Tell us your idea today. We&apos;ll be ready to shoot in hours, not weeks.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <input
