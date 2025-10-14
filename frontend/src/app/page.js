@@ -462,40 +462,6 @@ export default function Home() {
     };
   }, [openAccordion]);
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
-    pauseOnHover: true,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 640,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 360,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
-
   return (
     <>
       <header
@@ -1577,7 +1543,39 @@ export default function Home() {
               />
             </div>
             <div className="w-full pb-4 sm:pb-16 pt-8">
-              <Slider {...settings}>
+              <Slider
+                {...{
+                  dots: true,
+                  infinite: true,
+                  speed: 500,
+                  slidesToShow: 3,
+                  slidesToScroll: 1,
+                  autoplay: true,
+                  autoplaySpeed: 5000,
+                  pauseOnHover: true,
+                  arrows: false,
+                  responsive: [
+                    {
+                      breakpoint: 1024,
+                      settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 1,
+                      },
+                    },
+                    {
+                      breakpoint: 640,
+                      settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                        dots: true,
+                        arrows: false,
+                        centerMode: true,
+                        centerPadding: "20px",
+                      },
+                    },
+                  ],
+                }}
+              >
                 {testimonials.map((testimonial, index) => (
                   <div key={index} className="px-0 sm:px-3 pt-12 sm:pt-16 pb-3">
                     <div className="relative bg-white rounded-xl shadow-sm shadow-gray-300 p-4 h-[370px] flex flex-col transition-transform duration-300 hover:shadow-md hover:shadow-gray-300 hover:-translate-y-1">
