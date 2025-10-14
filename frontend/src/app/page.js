@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger, ScrollToPlugin } from "gsap/all";
-import Marquee from "react-fast-marquee";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -165,15 +164,6 @@ import whatWeDoIcon3 from "@/assets/svg/Languages-accessibility.svg";
 import whatWeDoIcon4 from "@/assets/svg/Report-ready.svg";
 import whatWeDoIcon5 from "@/assets/svg/thumbnail-kit.svg";
 
-const steps = [
-  { number: "01", label: "56 × 65", subLabel: null },
-  { number: "02", label: "Recce/Permits", subLabel: null },
-  { number: "03", label: "Shoot", subLabel: null },
-  { number: "04", label: "Edit", subLabel: null },
-  { number: "05", label: "Review (2 Rounds)", subLabel: null },
-  { number: "06", label: "Report-Ready", subLabel: "Delivery" },
-];
-
 import himalayaWellnessLogo from "@/assets/images/since-1930.jpg";
 import tescoLogo from "@/assets/images/tesco.png";
 import akshayPathraLogo from "@/assets/images/akshya.png";
@@ -235,27 +225,36 @@ const settings = {
 import vilmarcsMotionPictures from "@/assets/images/vilmarcs-motion-pictures.png";
 
 import hourseFooterLogo from "@/assets/images/hourse-footer.png";
+import secondFooterImage from "@/assets/images/wilmarcs-footer-logo.png";
 import AngleDown from "@/components/Icons/AngleDown";
 import AngleRight from "@/components/Icons/AngleRight";
+import Facebook from "@/components/Icons/Facebook";
+import Twitter from "@/components/Icons/Twitter";
+import Vimeo from "@/components/Icons/Vimeo";
+import Youtube from "@/components/Icons/Youtube";
+import Progress from "@/components/Progess";
 
-  const faqs = [
-    {
-      question: 'How fast can you start a project?',
-      answer: 'Bengaluru: 3-4 hrs. Other cities: same-day plan, 48-72 hrs start.',
-    },
-    {
-      question: 'Do you manage permissions and compliance?',
-      answer: 'Yes, we handle all necessary permissions and ensure full compliance with local regulations and building codes.',
-    },
-    {
-      question: 'Are you vendor-onboarding ready?',
-      answer: 'Absolutely! We have a streamlined vendor onboarding process with verified professionals ready to start.',
-    },
-    {
-      question: 'What deliverables are standard?',
-      answer: 'Standard deliverables include detailed project plans, material specifications, timeline schedules, and quality reports.',
-    },
-  ];
+const faqs = [
+  {
+    question: "How fast can you start a project?",
+    answer: "Bengaluru: 3-4 hrs. Other cities: same-day plan, 48-72 hrs start.",
+  },
+  {
+    question: "Do you manage permissions and compliance?",
+    answer:
+      "Yes, we handle all necessary permissions and ensure full compliance with local regulations and building codes.",
+  },
+  {
+    question: "Are you vendor-onboarding ready?",
+    answer:
+      "Absolutely! We have a streamlined vendor onboarding process with verified professionals ready to start.",
+  },
+  {
+    question: "What deliverables are standard?",
+    answer:
+      "Standard deliverables include detailed project plans, material specifications, timeline schedules, and quality reports.",
+  },
+];
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
@@ -1010,7 +1009,7 @@ export default function Home() {
             </div>
             <div className="w-full sm:w-1/2 pl-0 sm:pl-16 flex items-center pt-4 sm:pt-0">
               {openAccordion !== null && (
-                <div className="relative overflow-hidden w-full h-auto">
+                <div className="relative overflow-hidden w-full h-auto flex-1 image-container">
                   <Image
                     src={
                       accordianDifference.find(
@@ -1022,9 +1021,10 @@ export default function Home() {
                         (item) => item.id === openAccordion
                       ).title
                     }
-                    width="auto"
-                    height={400}
-                    className="rounded-xl w-full object-cover h-auto sm:h-[500px]"
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="object-cover w-full h-full rounded-xl"
                     ref={imageRef}
                   />
                   <h4 className="w-full rounded-b-xl absolute bottom-0 p-8 bg-black/70 text-white text-[24px] font-semibold">
@@ -1159,7 +1159,7 @@ export default function Home() {
         {/* Visual Experiences end */}
 
         {/* Our work progress start */}
-        {/* <section
+        <section
           className="min-h-auto relative z-10"
           style={{ backgroundColor: "#FFFFFF" }}
         >
@@ -1167,24 +1167,20 @@ export default function Home() {
             <div className="w-full">
               <TitleDescription
                 title="Our Work Process"
-                titleClass="mb-6 text-black text-center"
+                titleClass="text-black text-center"
                 description={false}
               />
             </div>
-            <div className="w-full py-4 sm:py-16 bg-white">
-              <Marquee
-                gradient={false}
-                speed={40}
-                pauseOnHover={true}
-              ></Marquee>
+            <div className="mx-4">
+                <Progress/>
             </div>
           </div>
-        </section> */}
+        </section>
         {/* Our work process end */}
 
         {/* Testimonials section start */}
         <section
-          className="min-h-auto relative z-10 mt-4 sm:mt-16"
+          className="min-h-auto relative z-10"
           style={{ backgroundColor: "#FFFFFF" }}
         >
           <div className="container">
@@ -1277,17 +1273,17 @@ export default function Home() {
                           onClick={() => toggleFAQ(index)}
                           className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors duration-200"
                         >
-                          <span className="text-gray-900 font-medium pr-4">
+                          <span className="primary-font text-black text-base md:text-[18px] font-semibold pr-4">
                             {faq.question}
                           </span>
                           <div className="flex-shrink-0">
                             {openIndex === index ? (
-                              <div className="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300">
-                                <AngleDown/>
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300">
+                                <AngleDown />
                               </div>
                             ) : (
-                              <div className="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300">
-                                <AngleRight/>
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300">
+                                <AngleRight />
                               </div>
                             )}
                           </div>
@@ -1295,11 +1291,13 @@ export default function Home() {
 
                         <div
                           className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                            openIndex === index ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+                            openIndex === index
+                              ? "max-h-40 opacity-100"
+                              : "max-h-0 opacity-0"
                           }`}
                         >
                           <div className="px-6 pb-5 pt-0">
-                            <p className="text-gray-600 text-sm leading-relaxed">
+                            <p className="text-[#6F6C8F] primary-font text-base md:text-[18px] leading-relaxed">
                               {faq.answer}
                             </p>
                           </div>
@@ -1320,13 +1318,14 @@ export default function Home() {
             <div className="flex justify-center items-center">
               <div className="flex flex-col md:flex-row bg-white shadow-md rounded-xl border border-gray-300 p-0 sm:p-6 w-full h-auto">
                 <Form />
-                <div className="w-full md:w-1/2 p-4 -mt-2 sm:-mt-0">
+                <div className="w-full md:w-1/2 p-4 -mt-2 sm:-mt-0 flex-1 image-container">
                   <Image
                     src={vilmarcsMotionPictures}
                     alt="Vilmarcs Motion Pictures"
-                    width="auto"
-                    height="auto"
-                    className="object-cover w-full h-auto sm:h-[455px] rounded-xl"
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="object-cover w-full h-full rounded-xl"
                   />
                 </div>
               </div>
@@ -1336,56 +1335,71 @@ export default function Home() {
         {/* Form end */}
       </main>
 
-      <footer className="bg-white text-gray-800 py-4">
-        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-3 justify-between items-center">
-          <div className="flex items-center justify-start space-x-6">
-            <a href="#" className="hover:text-gray-600">
+      <footer
+        className="relative py-12"
+        style={{
+          backgroundImage: `url(${hourseFooterLogo.src}), url(${secondFooterImage.src})`,
+          backgroundPosition: "center center, center 65%",
+          backgroundRepeat: "no-repeat, no-repeat",
+          backgroundSize: "contain, 150px 50px",
+          width: "100%",
+          minHeight: "300px",
+        }}
+      >
+        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 justify-between items-center">
+          <div className="py-6 flex items-center justify-start primay-font text-[16px] text-[#0A142F] space-x-8">
+            <a href="#" className="hover:text-gray-800">
               About us
             </a>
-            <a href="#" className="hover:text-gray-600">
+            <a href="#" className="hover:text-gray-800">
               Difference
             </a>
-            <a href="#" className="hover:text-gray-600">
+            <a href="#" className="hover:text-gray-800">
               Work
             </a>
-            <a href="#" className="hover:text-gray-600">
+            <a href="#" className="hover:text-gray-800">
               Solutions
             </a>
           </div>
-          <div className="flex items-center justify-center">
-            <Image
-              src={hourseFooterLogo}
-              alt="Wilmarcs Logo"
-              className="h-auto"
-            />
-          </div>
-          <div className="flex items-center justify-end space-x-4">
-            <a href="#" className="hover:text-gray-600">
-              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
-              </svg>
+          <div className="flex items-center justify-end space-x-8">
+            <a
+              href="#"
+              className="hover:scale-[1.1] transition-all duration-300"
+            >
+              <Facebook />
             </a>
-            <a href="#" className="hover:text-gray-600">
-              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M23 3a10.9 10.9 0 01-3.14 2.6 4.75 4.75 0 00-8.28 4.3A13.41 13.41 0 011.5 3.89 4.82 4.82 0 006.7 9.62a4.71 4.71 0 01-2.14-.59 4.75 4.75 0 003.98 4.67A4.74 4.74 0 015 13.39a4.77 4.77 0 01-1.05.13c-.4 0-.79-.04-1.17-.11a4.75 4.75 0 004.43 3.3 9.52 9.52 0 01-5.88 2.03c-.38 0-.76-.02-1.13-.07A13.36 13.36 0 007.25 21c8.45 0 13.08-7 13.08-13.08 0-.2 0-.4-.01-.6A9.36 9.36 0 0024 3.75a9.46 9.46 0 01-2.7.75z" />
-              </svg>
+            <a
+              href="#"
+              className="hover:scale-[1.1] transition-all duration-300"
+            >
+              <Twitter />
             </a>
-            <a href="#" className="hover:text-gray-600">
-              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.618 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.069-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.012-3.583.069-4.849.149-3.225 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-              </svg>
+            <a
+              href="#"
+              className="hover:scale-[1.1] transition-all duration-300"
+            >
+              <Vimeo />
+            </a>
+            <a
+              href="#"
+              className="hover:scale-[1.1] transition-all duration-300"
+            >
+              <Youtube />
             </a>
           </div>
         </div>
-        <div className="container mx-auto mt-4 flex justify-between items-center text-sm text-gray-600 flex-wrap">
-          <span>© 2025 MarketBytes. All rights reserved.</span>
-          <div className="flex space-x-4">
-            <a href="#" className="hover:text-gray-800">
-              Terms of Service
-            </a>
-            <a href="#" className="hover:text-gray-800">
-              Privacy Policy
-            </a>
+        <div className="container mx-auto">
+          <div className="border-t border-gray-400 my-4"></div>
+          <div className="py-6 flex justify-between items-center primary-font text-[14px] text-[#0A142F] flex-wrap">
+            <span>© 2025 MarketBytes. All rights reserved.</span>
+            <div className="flex space-x-8">
+              <a href="#" className="hover:text-gray-800">
+                Terms of Service
+              </a>
+              <a href="#" className="hover:text-gray-800">
+                Privacy Policy
+              </a>
+            </div>
           </div>
         </div>
       </footer>
