@@ -3,7 +3,7 @@ import React from "react";
 const HorseWhite = () => {
   return (
     <svg
-      width="16"
+      width="15"
       height="18"
       viewBox="0 0 16 18"
       fill="none"

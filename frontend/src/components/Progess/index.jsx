@@ -48,12 +48,15 @@ const Progress = () => {
               </span>
               {index < steps.length - 1 && (
                 <span
-                  className={`absolute ${
-                    index % 2 === 0 ? 'top-0 left-[115px]' : '-bottom-2 right-[15px] pb-2'
-                  }`}
+                  className={`absolute ${index % 2 === 0 ? 'top-0 left-[115px]' : '-bottom-2 right-[15px] pb-2'}`}
                   style={{ width: '80px' }}
                 >
                   {index % 2 === 0 ? <VectorArrowTop /> : <VectorArrowBottom />}
+                </span>
+              )}
+              {index === steps.length - 1 && (
+                <span className="absolute -bottom-2 left-[115px] pb-2" style={{ width: '80px' }}>
+                  <VectorArrowBottom />
                 </span>
               )}
             </div>

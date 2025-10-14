@@ -240,6 +240,8 @@ import Twitter from "@/components/Icons/Twitter";
 import Vimeo from "@/components/Icons/Vimeo";
 import Youtube from "@/components/Icons/Youtube";
 import Progress from "@/components/Progess";
+import Instagram from "@/components/Icons/Instagram";
+import LinkedIn from "@/components/Icons/Likedin";
 
 const faqs = [
   {
@@ -273,6 +275,7 @@ export default function Home() {
   const solutionsRef = useRef(null);
   const aboutCountRef = useRef(null);
   const imageRef = useRef(null);
+  const ReadyToRollRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(1);
   const [playingVideo, setPlayingVideo] = useState(null);
@@ -423,6 +426,23 @@ export default function Home() {
       }
     );
 
+    gsap.fromTo(
+      ReadyToRollRef.current,
+      { opacity: 0, y: 50 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ReadyToRollRef.current,
+          start: "top 80%",
+          end: "bottom 20%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
     if (aboutCountRef.current) {
       const counters = aboutCountRef.current.querySelectorAll(".counter");
       counters.forEach((counter, index) => {
@@ -517,10 +537,7 @@ export default function Home() {
             <div className="hidden sm:flex flex-shrink-0">
               <Button
                 text="Talk to a Producer"
-                onClick={() => {
-                  alert("Contact Producer");
-                  setIsMenuOpen(false);
-                }}
+                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
                 bgColor="rgba(255, 255, 255, 0.3)"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -639,7 +656,7 @@ export default function Home() {
           </p>
           <Button
             text="Start Your Project"
-            onClick={() => alert("Start Your Project")}
+            onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
             bgColor="rgba(255, 255, 255)"
             fontSize="md"
             textColor="#000"
@@ -796,7 +813,7 @@ export default function Home() {
                 <Button
                   text="Start Your Project"
                   icon={true}
-                  onClick={() => alert("Start Your Project")}
+                  onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
                   bgColor="#000"
                   fontSize="md"
                   textColor="#FFFFFF"
@@ -1060,7 +1077,7 @@ export default function Home() {
                 text="Start Your Project"
                 icon={true}
                 isIconLeft={true}
-                onClick={() => alert("Start Your Project")}
+                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
                 bgColor="#4CAF50"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -1221,7 +1238,7 @@ export default function Home() {
               <Button
                 text="Start Your Project"
                 icon={true}
-                onClick={() => alert("Start Your Project")}
+                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
                 bgColor="#000"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -1672,7 +1689,7 @@ export default function Home() {
         {/* FAQs end */}
 
         {/* Form start */}
-        <section className="min-h-auto relative z-10">
+        <section className="min-h-auto relative z-10" id="ready-to-roll" ref={ReadyToRollRef}>
           <div className="container py-6 sm:py-16 space-y-4 sm:space-y-16">
             <div className="flex justify-center items-center">
               <div className="flex flex-col md:flex-row bg-white shadow-md rounded-xl border border-gray-300 p-0 sm:p-6 w-full h-auto">
@@ -1737,26 +1754,26 @@ export default function Home() {
             </Link>
           </div>
           <div className="flex items-center justify-center sm:justify-end space-x-8">
+           <a
+              href="https://www.instagram.com/wilmarcsmotionpictures/"
+              className="hover:scale-[1.1] transition-all duration-300"
+            >
+              <Instagram />
+            </a>
             <a
-              href="#"
+              href="https://www.facebook.com/wilmarcs"
               className="hover:scale-[1.1] transition-all duration-300"
             >
               <Facebook />
             </a>
             <a
-              href="#"
+              href="https://www.linkedin.com/company/wilmarcs-motion-pictures/"
               className="hover:scale-[1.1] transition-all duration-300"
             >
-              <Twitter />
+              <LinkedIn />
             </a>
             <a
-              href="#"
-              className="hover:scale-[1.1] transition-all duration-300"
-            >
-              <Vimeo />
-            </a>
-            <a
-              href="#"
+              href="https://www.youtube.com/@wilmarcsmotionpictures_ind"
               className="hover:scale-[1.1] transition-all duration-300"
             >
               <Youtube />
@@ -1770,10 +1787,10 @@ export default function Home() {
               © 2025 MarketBytes. All rights reserved.
             </span>
             <div className="flex space-x-8 relative top-10 sm:top-0">
-              <a href="#" className="hover:text-gray-800">
+              <a href="https://wilmarcs.com/privacy-policy-for-wilmarcs-motion-pictures/" className="hover:text-gray-800">
                 Terms of Service
               </a>
-              <a href="#" className="hover:text-gray-800">
+              <a href="https://wilmarcs.com/terms-conditions/" className="hover:text-gray-800">
                 Privacy Policy
               </a>
             </div>
