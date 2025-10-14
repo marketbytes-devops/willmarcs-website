@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 90%;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.primary-font {
+  font-family: var(--font-open-sans), sans-serif !important;
+}
+
+.secondary-font {
+  font-family: var(--font-philosopher), sans-serif !important;
+}
+
+main, footer {
+  background-color: #ffffff !important;
+  position: relative;
+  z-index: 50;
+}
