@@ -1548,7 +1548,7 @@ export default function Home() {
                   dots: true,
                   infinite: true,
                   speed: 500,
-                  slidesToShow: 3, // Display 3 slides on desktop
+                  slidesToShow: 3,
                   slidesToScroll: 1,
                   autoplay: true,
                   autoplaySpeed: 5000,
@@ -1556,16 +1556,16 @@ export default function Home() {
                   arrows: false,
                   responsive: [
                     {
-                      breakpoint: 1024, // For screens smaller than 1024px (tablets and below)
+                      breakpoint: 1024, 
                       settings: {
-                        slidesToShow: 2, // Show 2 slides on tablets
+                        slidesToShow: 2,
                         slidesToScroll: 1,
                       },
                     },
                     {
-                      breakpoint: 640, // For screens smaller than 640px (mobile)
+                      breakpoint: 640,
                       settings: {
-                        slidesToShow: 1, // Show 1 slide on mobile
+                        slidesToShow: 1, 
                         slidesToScroll: 1,
                         dots: true,
                         arrows: false,
@@ -1578,7 +1578,7 @@ export default function Home() {
               >
                 {testimonials.map((testimonial, index) => (
                   <div key={index} className="px-0 sm:px-3 pt-12 sm:pt-16 pb-3">
-                    <div className="relative bg-white rounded-xl shadow-sm shadow-gray-300 p-4 h-[370px] flex flex-col transition-transform duration-300 hover:shadow-md hover:shadow-gray-300 hover:-translate-y-1">
+                    <div className="mx-4 sm:mx-0 relative bg-white rounded-xl shadow-sm shadow-gray-300 p-4 h-[370px] flex flex-col transition-transform duration-300 hover:shadow-md hover:shadow-gray-300 hover:-translate-y-1">
                       <div className="flex justify-between mb-3">
                         <div
                           className="relative -top-14 w-20 h-20 border border-gray-200 rounded-full flex items-center justify-center text-4xl"
