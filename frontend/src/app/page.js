@@ -1149,7 +1149,7 @@ export default function Home() {
               <div className="w-full flex flex-col gap-6 mb-12">
                 <p className="primary-font text-md text-center sm:text-left">
                   <span className="bg-[#4CAF50] text-[#FFFFFF] px-1 uppercase">
-                    About Us
+                    WHAT WE DO
                   </span>
                 </p>
                 <div className="flex flex-col sm:flex-row gap-6">
