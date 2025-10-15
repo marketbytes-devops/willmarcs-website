@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -89,13 +89,6 @@ import ourWorkImage4 from "@/assets/images/our-work-img-4.png";
 import ourWorkImage5 from "@/assets/images/our-work-img-5.png";
 import ourWorkImage6 from "@/assets/images/our-work-img-6.png";
 
-import differenceImage1 from "@/assets/images/diff-1.jpg";
-import differenceImage2 from "@/assets/images/diff-2.jpg";
-import differenceImage3 from "@/assets/images/diff-3.png";
-import differenceImage4 from "@/assets/images/diff-4.jpg";
-import differenceImage5 from "@/assets/images/diff-5.png";
-import differenceImage6 from "@/assets/images/diff-6.png";
-
 import differenceIcon1 from "@/assets/svg/Simplification.svg";
 import differenceIcon2 from "@/assets/svg/Boardroom.svg";
 import differenceIcon3 from "@/assets/svg/Glyph.svg";
@@ -107,7 +100,6 @@ const accordianDifference = [
   {
     id: 1,
     icon: differenceIcon1,
-    image: differenceImage1,
     differenceVideo: "/videos/Cinema-Quality-Corporate-Speed.mp4",
     title: "Cinema Quality. Corporate Speed.",
     description: "Cinema Quality. Corporate Speed.",
@@ -116,7 +108,6 @@ const accordianDifference = [
   {
     id: 2,
     icon: differenceIcon2,
-    image: differenceImage2,
     differenceVideo: "/videos/from-brief-to-boardrooom.mp4",
     title: "From Brief to Boardroom—Seamless Delivery",
     description: "From Brief to Boardroom—Seamless Delivery",
@@ -126,7 +117,6 @@ const accordianDifference = [
   {
     id: 3,
     icon: differenceIcon3,
-    image: differenceImage3,
     differenceVideo: "/videos/trusted-by-global-brands.mp4",
     title: "Trusted by Global Brands, Tailored for Local CSR Stories",
     description: "Trusted by Global Brands, Tailored for Local CSR Stories",
@@ -136,7 +126,6 @@ const accordianDifference = [
   {
     id: 4,
     icon: differenceIcon4,
-    image: differenceImage4,
     differenceVideo: "/videos/Pan.mp4",
     title: "Pan-India Execution, Global Standards",
     description: "Pan-India Execution, Global Standards",
@@ -145,7 +134,6 @@ const accordianDifference = [
   {
     id: 5,
     icon: differenceIcon5,
-    image: differenceImage5,
     differenceVideo: "/videos/Faster-Cuts.mp4",
     title: "Faster Cuts, Smarter Workflows",
     description: "Faster Cuts, Smarter Workflows",
@@ -155,7 +143,6 @@ const accordianDifference = [
   {
     id: 6,
     icon: differenceIcon6,
-    image: differenceImage6,
     differenceVideo: "/videos/Compliance.mp4",
     title: "Compliance & Consent Assured",
     description: "Compliance & Consent Assured",
@@ -245,58 +232,57 @@ export default function Home() {
   const differenceRef = useRef(null);
   const solutionsRef = useRef(null);
   const aboutCountRef = useRef(null);
-  const imageRef = useRef(null);
   const ReadyToRollRef = useRef(null);
-  
-  // NEW: Refs for auto-play videos
+
+  // VIDEO REFS FOR AUTO-PLAY
+  const aboutVideoRef = useRef(null);
   const himalayaVideoRef = useRef(null);
   const akshayaVideoRef = useRef(null);
-  const aboutVideoRef = useRef(null);
   const workVideosRef = useRef([]);
-  const differenceVideoRef = useRef(null);
+  const differenceVideosRef = useRef([]);
 
+  // SEQUENTIAL AUTO-PLAY STATE FOR WORK SECTION
+  const [autoPlayWorkIndex, setAutoPlayWorkIndex] = useState(-1);
+  const [isSequentialPlaying, setIsSequentialPlaying] = useState(false);
+
+  // MENU STATE
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(1);
+
+  // VIDEO PLAYBACK STATES
   const [playingVideo, setPlayingVideo] = useState(null);
-  const [playingVideoId, setPlayingVideoId] = useState(null);
   const [playingHimalayaVideo, setPlayingHimalayaVideo] = useState(false);
   const [playingAkshayaVideo, setPlayingAkshayaVideo] = useState(false);
 
+  // SCROLL-BASED AUTOPLAY STATES (NEW)
+  const [shouldAutoPlayAbout, setShouldAutoPlayAbout] = useState(false);
+  const [shouldAutoPlayHimalaya, setShouldAutoPlayHimalaya] = useState(false);
+  const [shouldAutoPlayAkshaya, setShouldAutoPlayAkshaya] = useState(false);
+
+  // FAQ STATE
+  const [openIndex, setOpenIndex] = useState(0);
+
   const toggleAccordion = (id) => {
     if (openAccordion === id) {
-      if (imageRef.current) {
-        gsap.to(imageRef.current, {
-          opacity: 0,
-          duration: 0.3,
-          ease: "power2.out",
-          onComplete: () => {
-            setOpenAccordion(null);
-            setPlayingVideoId(null);
-          },
-        });
-      } else {
-        setOpenAccordion(null);
-        setPlayingVideoId(null);
-      }
+      setOpenAccordion(null);
+      differenceVideosRef.current.forEach((video) => {
+        if (video) video.pause();
+      });
     } else {
-      if (openAccordion !== null && imageRef.current) {
-        gsap.to(imageRef.current, {
-          opacity: 0,
-          duration: 0.3,
-          ease: "power2.out",
-          onComplete: () => {
-            setOpenAccordion(id);
-            setPlayingVideoId(id);
-          },
+      setOpenAccordion(id);
+      setTimeout(() => {
+        differenceVideosRef.current.forEach((video, index) => {
+          if (video) {
+            if (index + 1 === id) {
+              video.play();
+            } else {
+              video.pause();
+            }
+          }
         });
-      } else {
-        setOpenAccordion(id);
-        setPlayingVideoId(id);
-      }
+      }, 100);
     }
   };
-
-  const [openIndex, setOpenIndex] = useState(0);
 
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -323,6 +309,8 @@ export default function Home() {
 
   const playVideo = (index, videoUrl) => {
     setPlayingVideo(index);
+    setIsSequentialPlaying(false);
+    setAutoPlayWorkIndex(-1);
   };
 
   const stopVideo = () => {
@@ -336,63 +324,95 @@ export default function Home() {
     return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : "";
   };
 
-  // NEW: Auto-play videos on scroll function
-  const autoPlayVideosOnScroll = () => {
-    // Himalaya Video Auto-play
-    if (himalayaVideoRef.current && himalayaVideoRef.current.contentWindow) {
-      const rect = himalayaVideoRef.current.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
-      if (isInView && !playingHimalayaVideo) {
-        setPlayingHimalayaVideo(true);
-      } else if (!isInView && playingHimalayaVideo) {
-        setPlayingHimalayaVideo(false);
-      }
-    }
+  const startSequentialAutoPlay = () => {
+    if (isSequentialPlaying || workRef.current.getBoundingClientRect().top > window.innerHeight) return;
 
-    // Akshaya Video Auto-play
-    if (akshayaVideoRef.current && akshayaVideoRef.current.contentWindow) {
-      const rect = akshayaVideoRef.current.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
-      if (isInView && !playingAkshayaVideo) {
-        setPlayingAkshayaVideo(true);
-      } else if (!isInView && playingAkshayaVideo) {
-        setPlayingAkshayaVideo(false);
-      }
-    }
+    setIsSequentialPlaying(true);
+    setAutoPlayWorkIndex(0);
+  };
 
-    // About Video Auto-play
-    if (aboutVideoRef.current && aboutVideoRef.current.contentWindow) {
-      const rect = aboutVideoRef.current.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
-      if (isInView && playingVideo !== "about") {
-        setPlayingVideo("about");
-      } else if (!isInView && playingVideo === "about") {
-        setPlayingVideo(null);
-      }
-    }
-
-    // Work Videos Auto-play
-    workVideosRef.current.forEach((videoRef, index) => {
-      if (videoRef && videoRef.contentWindow) {
-        const rect = videoRef.getBoundingClientRect();
-        const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
-        if (isInView && playingVideo !== index) {
-          setPlayingVideo(index);
-        }
-      }
-    });
-
-    // Difference Video Auto-play
-    if (differenceVideoRef.current) {
-      const rect = differenceVideoRef.current.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
-      if (isInView && playingVideoId !== openAccordion) {
-        setPlayingVideoId(openAccordion);
-      }
+  const nextSequentialVideo = () => {
+    const nextIndex = autoPlayWorkIndex + 1;
+    if (nextIndex < 6) {
+      setAutoPlayWorkIndex(nextIndex);
+    } else {
+      setIsSequentialPlaying(false);
+      setAutoPlayWorkIndex(-1);
     }
   };
 
+  // FIXED: SCROLL-BASED AUTOPLAY FUNCTION
+  const autoPlayVideosOnScroll = useCallback(() => {
+    // About Section - "See the work in 60 seconds"
+    if (aboutVideoRef.current && !playingVideo) {
+      const rect = aboutVideoRef.current.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
+      
+      if (isInView) {
+        setShouldAutoPlayAbout(true);
+      } else {
+        setShouldAutoPlayAbout(false);
+      }
+    }
+
+    // Case Studies - Himalaya Video
+    if (himalayaVideoRef.current && !playingHimalayaVideo) {
+      const rect = himalayaVideoRef.current.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
+      
+      if (isInView) {
+        setShouldAutoPlayHimalaya(true);
+      } else {
+        setShouldAutoPlayHimalaya(false);
+      }
+    }
+
+    // Case Studies - Akshaya Video
+    if (akshayaVideoRef.current && !playingAkshayaVideo) {
+      const rect = akshayaVideoRef.current.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
+      
+      if (isInView) {
+        setShouldAutoPlayAkshaya(true);
+      } else {
+        setShouldAutoPlayAkshaya(false);
+      }
+    }
+
+    // Work Section
+    if (workRef.current) {
+      const rect = workRef.current.getBoundingClientRect();
+      const isWorkInView =
+        rect.top < window.innerHeight * 0.8 && rect.bottom > window.innerHeight * 0.2;
+      if (isWorkInView && autoPlayWorkIndex === -1 && !isSequentialPlaying) {
+        setTimeout(startSequentialAutoPlay, 500);
+      }
+    }
+
+    // Difference Videos
+    differenceVideosRef.current.forEach((videoRef, index) => {
+      if (videoRef) {
+        const rect = videoRef.getBoundingClientRect();
+        const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
+        if (isInView && openAccordion === index + 1) {
+          videoRef.play();
+        } else if (!isInView && openAccordion === index + 1) {
+          videoRef.pause();
+        }
+      }
+    });
+  }, [
+    playingVideo,
+    playingHimalayaVideo, 
+    playingAkshayaVideo,
+    autoPlayWorkIndex,
+    isSequentialPlaying,
+    openAccordion
+  ]);
+
+  // MAIN USEEFFECT - FIXED: Empty dependency array
   useEffect(() => {
+    // GSAP Animations
     gsap.fromTo(
       aboutRef.current,
       { opacity: 0, y: 50 },
@@ -511,27 +531,126 @@ export default function Home() {
       });
     }
 
-    if (imageRef.current && openAccordion !== null) {
-      gsap.fromTo(
-        imageRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.5, ease: "power2.out" }
-      );
-    }
-
-    // NEW: Scroll listener for auto-play videos
+    // FIXED: SCROLL LISTENER - Only runs once
     const handleScroll = () => {
       autoPlayVideosOnScroll();
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     handleScroll(); // Initial check
+
+    // Handle video end for sequential play in Work section
+    const handleMessage = (event) => {
+      if (event.origin !== "https://www.youtube.com") return;
+      const data = JSON.parse(event.data);
+      if (
+        data.event === "onStateChange" &&
+        data.info === 0 && // Video ended
+        autoPlayWorkIndex >= 0 &&
+        workVideosRef.current[autoPlayWorkIndex]
+      ) {
+        const currentIndex = parseInt(workVideosRef.current[autoPlayWorkIndex].dataset.index);
+        if (autoPlayWorkIndex === currentIndex) {
+          nextSequentialVideo();
+        }
+      }
+    };
+    window.addEventListener("message", handleMessage);
 
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("message", handleMessage);
     };
-  }, [openAccordion, playingHimalayaVideo, playingAkshayaVideo, playingVideo, playingVideoId]);
+  }, []); // FIXED: Empty dependency array
+
+  // ✅ FIXED: 2-SECOND AUTO-PAUSE FOR ABOUT VIDEO
+  useEffect(() => {
+    if (aboutVideoRef.current && shouldAutoPlayAbout && !playingVideo) {
+      const iframe = aboutVideoRef.current;
+      iframe.contentWindow.postMessage(
+        '{"event":"command","func":"playVideo","args":""}',
+        "*"
+      );
+      setPlayingVideo("about");
+      
+      const timer = setTimeout(() => {
+        if (playingVideo === "about") {
+          iframe.contentWindow.postMessage(
+            '{"event":"command","func":"pauseVideo","args":""}',
+            "*"
+          );
+          setPlayingVideo(null);
+          setShouldAutoPlayAbout(false);
+        }
+      }, 2000); // ✅ CHANGED TO 2 SECONDS
+      
+      return () => clearTimeout(timer);
+    }
+  }, [shouldAutoPlayAbout, playingVideo]);
+
+  // ✅ FIXED: 2-SECOND AUTO-PAUSE FOR HIMALAYA VIDEO
+  useEffect(() => {
+    if (himalayaVideoRef.current && shouldAutoPlayHimalaya && !playingHimalayaVideo) {
+      const iframe = himalayaVideoRef.current;
+      iframe.contentWindow.postMessage(
+        '{"event":"command","func":"playVideo","args":""}',
+        "*"
+      );
+      setPlayingHimalayaVideo(true);
+      
+      const timer = setTimeout(() => {
+        if (playingHimalayaVideo) {
+          iframe.contentWindow.postMessage(
+            '{"event":"command","func":"pauseVideo","args":""}',
+            "*"
+          );
+          setPlayingHimalayaVideo(false);
+          setShouldAutoPlayHimalaya(false);
+        }
+      }, 2000); // ✅ CHANGED TO 2 SECONDS
+      
+      return () => clearTimeout(timer);
+    }
+  }, [shouldAutoPlayHimalaya, playingHimalayaVideo]);
+
+  // ✅ FIXED: 2-SECOND AUTO-PAUSE FOR AKSHAYA VIDEO
+  useEffect(() => {
+    if (akshayaVideoRef.current && shouldAutoPlayAkshaya && !playingAkshayaVideo) {
+      const iframe = akshayaVideoRef.current;
+      iframe.contentWindow.postMessage(
+        '{"event":"command","func":"playVideo","args":""}',
+        "*"
+      );
+      setPlayingAkshayaVideo(true);
+      
+      const timer = setTimeout(() => {
+        if (playingAkshayaVideo) {
+          iframe.contentWindow.postMessage(
+            '{"event":"command","func":"pauseVideo","args":""}',
+            "*"
+          );
+          setPlayingAkshayaVideo(false);
+          setShouldAutoPlayAkshaya(false);
+        }
+      }, 2000); // ✅ CHANGED TO 2 SECONDS
+      
+      return () => clearTimeout(timer);
+    }
+  }, [shouldAutoPlayAkshaya, playingAkshayaVideo]);
+
+  // PAUSE VIDEOS WHEN USER CLICKS
+  useEffect(() => {
+    if (playingVideo !== null && playingVideo !== "about") {
+      setShouldAutoPlayAbout(false);
+    }
+    if (playingHimalayaVideo === false) {
+      setShouldAutoPlayHimalaya(false);
+    }
+    if (playingAkshayaVideo === false) {
+      setShouldAutoPlayAkshaya(false);
+    }
+  }, [playingVideo, playingHimalayaVideo, playingAkshayaVideo]);
 
   return (
     <>
@@ -548,7 +667,6 @@ export default function Home() {
             <div className="flex-shrink-0">
               <Image src={logo} alt="Wilmarcs Logo" width={140} height={40} />
             </div>
-            {/* Desktop Menu */}
             <ul className="hidden sm:flex justify-center gap-8 flex-grow">
               <li>
                 <Link
@@ -590,7 +708,6 @@ export default function Home() {
                 hoverTextColor="#FFFFFF"
               />
             </div>
-            {/* Hamburger Icon for Mobile */}
             <button
               className="sm:hidden flex items-center justify-center w-10 h-10"
               onClick={toggleMenu}
@@ -610,7 +727,6 @@ export default function Home() {
               </svg>
             </button>
           </div>
-          {/* Mobile Menu */}
           <div
             className={`z-20 fixed top-0 right-0 h-screen w-full bg-black/90 transform transition-transform duration-300 ease-in-out ${
               isMenuOpen ? "translate-x-0" : "translate-x-full"
@@ -670,9 +786,7 @@ export default function Home() {
               <li>
                 <Button
                   text="Talk to a Producer"
-                  onClick={() =>
-                    scrollToSection(ReadyToRollRef, "ready-to-roll")
-                  }
+                  onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
                   bgColor="rgba(255, 255, 255, 0.3)"
                   fontSize="lg"
                   textColor="#FFFFFF"
@@ -724,7 +838,6 @@ export default function Home() {
           }}
         />
 
-        {/* Trusted by international names start */}
         <section
           className="container min-h-auto pt-[2vh] sm:pt-[4vh] relative z-10"
           style={{ backgroundColor: "#ffffff" }}
@@ -752,9 +865,7 @@ export default function Home() {
             ))}
           </div>
         </section>
-        {/* Trusted by international names end */}
 
-        {/* About Us Section start */}
         <section
           className="container min-h-auto pt-6 sm:pt-16 relative z-10"
           style={{ backgroundColor: "#ffffff" }}
@@ -775,13 +886,13 @@ export default function Home() {
                   <div className="relative w-full h-full">
                     <iframe
                       ref={aboutVideoRef}
-                      src="https://www.youtube.com/embed/gwkQYgElMtQ?autoplay=1&mute=1&loop=1&playlist=gwkQYgElMtQ"
+                      src="https://www.youtube.com/embed/gwkQYgElMtQ?autoplay=0&mute=1"
                       title="See the work in 60 seconds"
                       className="w-full h-full"
                       frameBorder="0"
                       allow="autoplay; encrypted-media"
                       allowFullScreen
-                    ></iframe>
+                    />
                     <button
                       onClick={() => setPlayingVideo(null)}
                       className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
@@ -874,9 +985,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* About Us Section end */}
 
-        {/* Case study start */}
         <section
           className="min-h-auto mt-8 sm:mt-16 relative z-10"
           style={{ backgroundColor: "#000" }}
@@ -891,7 +1000,6 @@ export default function Home() {
               />
             </div>
 
-            {/* Himalaya Wellness */}
             <div className="flex flex-col sm:flex-row items-center justify-center w-full gap-8 rounded-xl p-4 sm:p-8 bg-[#1B1B1BB2]">
               <div className="w-full sm:w-[45%]">
                 <div className="relative w-full h-full bg-white rounded-xl group">
@@ -899,11 +1007,11 @@ export default function Home() {
                     <div className="relative w-full h-full">
                       <iframe
                         ref={himalayaVideoRef}
-                        src="https://www.youtube.com/embed/tzIq68pUFRU?autoplay=1&mute=1&loop=1&playlist=tzIq68pUFRU"
+                        src="https://www.youtube.com/embed/tzIq68pUFRU?autoplay=0&mute=1"
                         title="Himalaya Wellness – Mangrove Restoration Film"
                         className="w-full h-auto sm:h-[350px] rounded-xl"
                         frameBorder="0"
-                        allow="autoplay; encrypted-media"
+                        allow="autoplay"
                         allowFullScreen
                       />
                       <button
@@ -1007,7 +1115,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Akshaya Patra */}
             <div className="flex flex-col sm:flex-row items-center justify-center w-full gap-8 rounded-xl p-4 sm:p-8 bg-[#1B1B1BB2]">
               <div className="w-full sm:w-[55%]">
                 <TitleDescription
@@ -1055,7 +1162,7 @@ export default function Home() {
                     <div className="relative w-full h-full">
                       <iframe
                         ref={akshayaVideoRef}
-                        src="https://www.youtube.com/embed/aVyfbWWIK6w?autoplay=1&mute=1&loop=1&playlist=aVyfbWWIK6w"
+                        src="https://www.youtube.com/embed/aVyfbWWIK6w?autoplay=0&mute=1"
                         title="Akshaya Patra – Nationwide Documentary (UN Showcase)"
                         className="w-full h-auto sm:h-[350px] rounded-xl"
                         frameBorder="0"
@@ -1139,9 +1246,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* Case study end */}
 
-        {/* Our work start */}
         <section
           className="min-h-auto relative z-10"
           style={{ backgroundColor: "#F6EDD9" }}
@@ -1195,96 +1300,109 @@ export default function Home() {
                   description: "CSR Documentary",
                   videoUrl: "https://youtu.be/7cXdx2Tc75s",
                 },
-              ].map((item, index) => (
-                <div
-                  key={index}
-                  className="relative w-full p-3 bg-white rounded-xl group hover:shadow-xl transition-all duration-300 border border-gray-300"
-                >
-                  <div className="relative w-auto h-[300px] rounded-xl overflow-hidden">
-                    {playingVideo === index ? (
-                      <div className="relative w-full h-full">
-                        <iframe
-                          ref={(el) => (workVideosRef.current[index] = el)}
-                          src={`${getYouTubeEmbedUrl(item.videoUrl)}&autoplay=1&mute=1&loop=1&playlist=${item.videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&]+)/)?.[1]}`}
-                          title={item.title}
-                          className="w-full h-full"
-                          frameBorder="0"
-                          allow="autoplay; encrypted-media"
-                          allowFullScreen
-                        ></iframe>
-                        <button
-                          onClick={stopVideo}
-                          className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
-                          aria-label="Close video"
-                        >
-                          <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M18 6L6 18M6 6L18 18"
-                              stroke="white"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        <Image
-                          src={item.image}
-                          alt={item.title}
-                          width="auto"
-                          height={400}
-                          className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-[1.05]"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-70 rounded-xl"></div>
-                        <div className="absolute inset-0 flex items-center justify-center">
+              ].map((item, index) => {
+                const isAutoPlaying = autoPlayWorkIndex === index;
+                const isClickedPlaying = playingVideo === index;
+                const isPlaying = isAutoPlaying || isClickedPlaying;
+
+                return (
+                  <div
+                    key={index}
+                    className="relative w-full p-3 bg-white rounded-xl group hover:shadow-xl transition-all duration-300 border border-gray-300"
+                  >
+                    <div className="relative w-auto h-[300px] rounded-xl overflow-hidden">
+                      {isPlaying ? (
+                        <div className="relative w-full h-full">
+                          <iframe
+                            ref={(el) => {
+                              workVideosRef.current[index] = el;
+                              if (el) el.dataset.index = index;
+                            }}
+                            src={`${getYouTubeEmbedUrl(
+                              item.videoUrl
+                            )}&autoplay=1&mute=1&loop=1&playlist=${item.videoUrl.match(
+                              /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&]+)/
+                            )?.[1]}`}
+                            title={item.title}
+                            className="w-full h-full"
+                            frameBorder="0"
+                            allow="autoplay; encrypted-media"
+                            allowFullScreen
+                          />
                           <button
-                            onClick={() => playVideo(index, item.videoUrl)}
-                            className="relative top-10 cursor-pointer"
-                            aria-label={`Play ${item.title} video`}
+                            onClick={stopVideo}
+                            className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
+                            aria-label="Close video"
                           >
                             <svg
-                              width="60"
-                              height="60"
-                              viewBox="0 0 91 92"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
                               fill="none"
                               xmlns="http://www.w3.org/2000/svg"
-                              className="transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110 relative -top-10"
                             >
                               <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M45.4999 0.126709C20.371 0.126709 0 20.4977 0 45.6266C0 70.7555 20.371 91.1265 45.4999 91.1265C70.6288 91.1265 90.9998 70.7555 90.9998 45.6266C90.9732 20.509 70.6178 0.15356 45.4999 0.126709ZM63.2026 48.5354C63.8346 48.2205 64.3467 47.7082 64.6617 47.0764C65.4624 45.4699 64.8091 43.5186 63.2026 42.718L37.2027 29.7179C36.7512 29.4923 36.2532 29.375 35.7484 29.3752C33.9534 29.3761 32.4991 30.8318 32.4999 32.6268V58.6267C32.497 59.1368 32.6145 59.6407 32.8426 60.0972C33.6451 61.7029 35.597 62.3539 37.2027 61.5517L63.2026 48.5516V48.5354Z"
-                                fill="black"
-                                fillOpacity="0.43"
-                              />
-                              <path
-                                d="M64.6617 47.0764C64.3467 47.7082 63.8346 48.2205 63.2026 48.5354V48.5516L37.2027 61.5517C35.597 62.3539 33.6451 61.7029 32.8426 60.0972C32.6145 59.6407 32.497 59.1368 32.4999 58.6267V32.6268C32.4991 30.8318 33.9534 29.3761 35.7484 29.3752C36.2532 29.375 36.7512 29.4923 37.2027 29.7179L63.2026 42.718C64.8091 43.5186 65.4624 45.4699 64.6617 47.0764Z"
-                                fill="white"
+                                d="M18 6L6 18M6 6L18 18"
+                                stroke="white"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                               />
                             </svg>
                           </button>
                         </div>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          <Image
+                            src={item.image}
+                            alt={item.title}
+                            width="auto"
+                            height={400}
+                            className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-[1.05]"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-70 rounded-xl"></div>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <button
+                              onClick={() => playVideo(index, item.videoUrl)}
+                              className="relative top-10 cursor-pointer"
+                              aria-label={`Play ${item.title} video`}
+                            >
+                              <svg
+                                width="60"
+                                height="60"
+                                viewBox="0 0 91 92"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110 relative -top-10"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M45.4999 0.126709C20.371 0.126709 0 20.4977 0 45.6266C0 70.7555 20.371 91.1265 45.4999 91.1265C70.6288 91.1265 90.9998 70.7555 90.9998 45.6266C90.9732 20.509 70.6178 0.15356 45.4999 0.126709ZM63.2026 48.5354C63.8346 48.2205 64.3467 47.7082 64.6617 47.0764C65.4624 45.4699 64.8091 43.5186 63.2026 42.718L37.2027 29.7179C36.7512 29.4923 36.2532 29.375 35.7484 29.3752C33.9534 29.3761 32.4991 30.8318 32.4999 32.6268V58.6267C32.497 59.1368 32.6145 59.6407 32.8426 60.0972C33.6451 61.7029 35.597 62.3539 37.2027 61.5517L63.2026 48.5516V48.5354Z"
+                                  fill="black"
+                                  fillOpacity="0.43"
+                                />
+                                <path
+                                  d="M64.6617 47.0764C64.3467 47.7082 63.8346 48.2205 63.2026 48.5354V48.5516L37.2027 61.5517C35.597 62.3539 33.6451 61.7029 32.8426 60.0972C32.6145 59.6407 32.497 59.1368 32.4999 58.6267V32.6268C32.4991 30.8318 33.9534 29.3761 35.7484 29.3752C36.2532 29.375 36.7512 29.4923 37.2027 29.7179L63.2026 42.718C64.8091 43.5186 65.4624 45.4699 64.6617 47.0764Z"
+                                  fill="white"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <div className="py-4">
+                      <h3 className="primary-font text-base md:text-[18px] font-bold">
+                        {item.title}
+                      </h3>
+                      <p className="primary-font text-base md:text-[18px]">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
-                  <div className="py-4">
-                    <h3 className="primary-font text-base md:text-[18px] font-bold">
-                      {item.title}
-                    </h3>
-                    <p className="primary-font text-base md:text-[18px]">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="text-center flex items-center justify-center">
               <Button
@@ -1301,9 +1419,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* Our work end */}
 
-        {/* Difference section start */}
         <section
           className="container py-6 sm:py-16 min-h-auto relative z-10"
           id="difference"
@@ -1368,109 +1484,34 @@ export default function Home() {
                 ))}
               </ul>
             </div>
+
             <div className="w-full sm:w-1/2 pl-0 sm:pl-16 flex items-center pt-4 sm:pt-0 pb-2 sm:pb-0">
               {openAccordion !== null && (
-                <div
-                  ref={imageRef}
-                  className="relative overflow-hidden w-full h-auto sm:h-[510px] rounded-xl"
-                >
-                  {playingVideoId === openAccordion ? (
-                    <div className="relative w-full h-full">
-                      <video
-                        ref={differenceVideoRef}
-                        src={
-                          accordianDifference.find(
-                            (item) => item.id === openAccordion
-                          ).differenceVideo
-                        }
-                        className="w-full h-full object-cover rounded-xl"
-                        controls
-                        autoPlay
-                        muted
-                        loop
-                        onEnded={() => setPlayingVideoId(null)}
-                      />
-                      <button
-                        onClick={() => setPlayingVideoId(null)}
-                        className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
-                        aria-label="Close video"
-                      >
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M18 6L6 18M6 6L18 18"
-                            stroke="white"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <Image
-                        src={
-                          accordianDifference.find(
-                            (item) => item.id === openAccordion
-                          ).image
-                        }
-                        alt={
-                          accordianDifference.find(
-                            (item) => item.id === openAccordion
-                          ).title
-                        }
-                        width={0}
-                        height={0}
-                        sizes="100vw"
-                        className="object-cover w-full h-full rounded-xl cursor-pointer"
-                        onClick={() => setPlayingVideoId(openAccordion)}
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <svg
-                          width="60"
-                          height="60"
-                          viewBox="0 0 91 92"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="transition-all duration-300 opacity-70 hover:opacity-100 hover:scale-110 cursor-pointer"
-                          onClick={() => setPlayingVideoId(openAccordion)}
-                        >
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M45.4999 0.126709C20.371 0.126709 0 20.4977 0 45.6266C0 70.7555 20.371 91.1265 45.4999 91.1265C70.6288 91.1265 90.9998 70.7555 90.9998 45.6266C90.9732 20.509 70.6178 0.15356 45.4999 0.126709ZM63.2026 48.5354C63.8346 48.2205 64.3467 47.7082 64.6617 47.0764C65.4624 45.4699 64.8091 43.5186 63.2026 42.718L37.2027 29.7179C36.7512 29.4923 36.2532 29.375 35.7484 29.3752C33.9534 29.3761 32.4991 30.8318 32.4999 32.6268V58.6267C32.497 59.1368 32.6145 59.6407 32.8426 60.0972C33.6451 61.7029 35.597 62.3539 37.2027 61.5517L63.2026 48.5516V48.5354Z"
-                            fill="black"
-                            fillOpacity="0.43"
-                          />
-                          <path
-                            d="M64.6617 47.0764C64.3467 47.7082 63.8346 48.2205 63.2026 48.5354V48.5516L37.2027 61.5517C35.597 62.3539 33.6451 61.7029 32.8426 60.0972C32.6145 59.6407 32.497 59.1368 32.4999 58.6267V32.6268C32.4991 30.8318 33.9534 29.3761 35.7484 29.3752C36.2532 29.375 36.7512 29.4923 37.2027 29.7179L63.2026 42.718C64.8091 43.5186 65.4624 45.4699 64.6617 47.0764Z"
-                            fill="white"
-                          />
-                        </svg>
-                      </div>
-                      <h4 className="w-full rounded-b-xl absolute bottom-0 p-8 bg-black/70 text-white text-[24px] font-semibold">
-                        {
-                          accordianDifference.find(
-                            (item) => item.id === openAccordion
-                          ).caption
-                        }
-                      </h4>
-                    </>
-                  )}
+                <div className="relative overflow-hidden w-full h-auto sm:h-[510px] rounded-xl">
+                  <video
+                    ref={(el) => (differenceVideosRef.current[openAccordion - 1] = el)}
+                    src={
+                      accordianDifference.find((item) => item.id === openAccordion)
+                        .differenceVideo
+                    }
+                    className="w-full h-full object-cover rounded-xl"
+                    muted
+                    loop
+                    playsInline
+                  />
+
+                  <h4 className="w-full rounded-b-xl absolute bottom-0 p-8 bg-black/70 text-white text-[24px] font-semibold z-10">
+                    {
+                      accordianDifference.find((item) => item.id === openAccordion)
+                        .caption
+                    }
+                  </h4>
                 </div>
               )}
             </div>
           </div>
         </section>
-        {/* Difference section end */}
 
-        {/* Visual Experiences start */}
         <section
           className="relative z-10 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${whatWeDoBg.src})` }}
@@ -1586,9 +1627,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* Visual Experiences end */}
 
-        {/* Our work process start */}
         <section
           className="min-h-auto relative z-10"
           style={{ backgroundColor: "#FFFFFF" }}
@@ -1606,9 +1645,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* Our work process end */}
 
-        {/* Testimonials section start */}
         <section
           className="min-h-auto relative z-10"
           style={{ backgroundColor: "#FFFFFF" }}
@@ -1761,9 +1798,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* Testimonials section end */}
 
-        {/* FAQs start */}
         <section
           className="min-h-auto relative z-10 mt-6 sm:mt-0"
           style={{ backgroundColor: "#F6EDD9" }}
@@ -1826,9 +1861,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* FAQs end */}
 
-        {/* Form start */}
         <section
           className="min-h-auto relative z-10"
           id="ready-to-roll"
@@ -1852,7 +1885,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* Form end */}
       </main>
 
       <footer
