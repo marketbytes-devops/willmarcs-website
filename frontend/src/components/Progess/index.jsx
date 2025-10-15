@@ -16,7 +16,7 @@ const Progress = () => {
     { number: '06', label: 'Report-Ready Delivery' },
   ];
 
-  const settings = {
+  const desktopSettings = {
     dots: false,
     infinite: true,
     slidesToShow: 6,
@@ -43,54 +43,118 @@ const Progress = () => {
     ],
   };
 
-  return (
-    <section className="min-h-auto relative z-10">
-      <div className="w-full">
-        <Slider {...settings} className="overflow-hidden">
-          {steps.map((step, index) => (
-            <div
-              key={index}
-              className="relative mx-4 flex items-center justify-center"
-            >
-              <div className="card flex flex-col items-center justify-center min-w-[200px] min-h-auto sm:min-h-[230px] px-4 pt-2 sm:pt-0">
-                <span
-                  className="secondary-font text-xl md:text-2xl font-bold text-white inline-flex items-center justify-center"
-                  style={{
-                    backgroundImage: `url(${iconBox.src})`,
-                    backgroundPosition: 'center center',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundSize: '80px 80px',
-                    width: '80px',
-                    height: '80px',
-                    lineHeight: '80px',
-                    textAlign: 'center',
-                  }}
-                >
-                  {step.number}
-                </span>
-                <span className="mt-4 primary-font font-semibold text-base md:text-lg text-black text-center">
-                  {step.label}
-                </span>
-              </div>
+  const mobileSettings = {
+    dots: false,
+    infinite: true,
+    slidesToShow: 2,
+    slidesToScroll: 2,
+    autoplay: true,
+    speed: 3000,
+    autoplaySpeed: 1000,
+    cssEase: 'linear',
+    pauseOnHover: true,
+    arrows: false
+  };
 
-              {index < steps.length - 1 && (
-                <span
-                  className={`hidden md:block absolute ${index % 2 === 0 ? 'top-0 left-[115px]' : '-bottom-2 right-[15px] pb-2'}`}
-                  style={{ width: '80px' }}
-                >
-                  {index % 2 === 0 ? <VectorArrowTop /> : <VectorArrowBottom />}
-                </span>
-              )}
-              {/* {index === steps.length - 1 && (
+  return (
+    <>
+      <section className="hidden sm:block min-h-auto relative z-10">
+        <div className="w-full">
+          <Slider {...desktopSettings} className="overflow-hidden">
+            {steps.map((step, index) => (
+              <div
+                key={index}
+                className="relative mx-4 flex items-center justify-center"
+              >
+                <div className="card flex flex-col items-center justify-center min-w-[200px] min-h-auto sm:min-h-[230px] px-4 pt-2 sm:pt-0">
+                  <span
+                    className="secondary-font text-xl md:text-2xl font-bold text-white inline-flex items-center justify-center"
+                    style={{
+                      backgroundImage: `url(${iconBox.src})`,
+                      backgroundPosition: 'center center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '80px 80px',
+                      width: '80px',
+                      height: '80px',
+                      lineHeight: '80px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {step.number}
+                  </span>
+                  <span className="mt-4 primary-font font-semibold text-base md:text-lg text-black text-center">
+                    {step.label}
+                  </span>
+                </div>
+
+                {index < steps.length - 1 && (
+                  <span
+                    className={`hidden md:block absolute ${index % 2 === 0 ? 'top-0 left-[115px]' : '-bottom-2 right-[15px] pb-2'}`}
+                    style={{ width: '80px' }}
+                  >
+                    {index % 2 === 0 ? <VectorArrowTop /> : <VectorArrowBottom />}
+                  </span>
+                )}
+                {/* {index === steps.length - 1 && (
                 <span className="hidden md:block absolute -bottom-2 left-[115px] pb-2" style={{ width: '80px' }}>
                   <VectorArrowBottom />
                 </span>
               )} */}
-            </div>
-          ))}
-        </Slider>
-      </div>
-    </section>
+              </div>
+            ))}
+          </Slider>
+        </div>
+      </section>
+
+
+      <section className="block sm:hidden min-h-auto relative z-10">
+        <div className="w-full">
+          <Slider {...mobileSettings} className="overflow-hidden">
+            {steps.map((step, index) => (
+              <div
+                key={index}
+                className="relative mx-4 flex items-center justify-center"
+              >
+                <div className="card flex flex-col items-center justify-center min-w-[200px] min-h-auto sm:min-h-[230px] px-4 pt-2 sm:pt-0">
+                  <span
+                    className="secondary-font text-xl md:text-2xl font-bold text-white inline-flex items-center justify-center"
+                    style={{
+                      backgroundImage: `url(${iconBox.src})`,
+                      backgroundPosition: 'center center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '80px 80px',
+                      width: '80px',
+                      height: '80px',
+                      lineHeight: '80px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {step.number}
+                  </span>
+                  <span className="mt-4 primary-font font-semibold text-base md:text-lg text-black text-center">
+                    {step.label}
+                  </span>
+                </div>
+
+                {index < steps.length - 1 && (
+                  <span
+                    className={`hidden md:block absolute ${index % 2 === 0 ? 'top-0 left-[115px]' : '-bottom-2 right-[15px] pb-2'}`}
+                    style={{ width: '80px' }}
+                  >
+                    {index % 2 === 0 ? <VectorArrowTop /> : <VectorArrowBottom />}
+                  </span>
+                )}
+                {/* {index === steps.length - 1 && (
+                <span className="hidden md:block absolute -bottom-2 left-[115px] pb-2" style={{ width: '80px' }}>
+                  <VectorArrowBottom />
+                </span>
+              )} */}
+              </div>
+            ))}
+          </Slider>
+        </div>
+      </section>
+    </>
   );
 };
 
