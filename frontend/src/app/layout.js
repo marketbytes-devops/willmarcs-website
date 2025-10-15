@@ -16,8 +16,8 @@ const philosopher = Philosopher({
 });
 
 export const metadata = {
-  title: "Wilmarcs",
-  description: "Welcome to Wilmarcs — your trusted platform.",
+  title: "Drive Real Impact with CSR Videos | Wilmarcs Can Help You Shine",
+  description: "Wilmarcs creates powerful CSR videos, ESG stories & annual report films to showcase your brand's impact. Connect with us today to inspire lasting change.",
   icons: {
     icon: [
       {
@@ -31,6 +31,9 @@ export const metadata = {
     ],
     apple:
       "https://wilmarcs.com/wp-content/uploads/2024/11/Wilmarcs-Icon_Black-fotor-20241030162914-200x200.png",
+  },
+  alternates: {
+    canonical: "https://wilmarcs.com/csr-videos-wilmarcs",
   },
 };
 

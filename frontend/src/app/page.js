@@ -325,7 +325,11 @@ export default function Home() {
   };
 
   const startSequentialAutoPlay = () => {
-    if (isSequentialPlaying || workRef.current.getBoundingClientRect().top > window.innerHeight) return;
+    if (
+      isSequentialPlaying ||
+      workRef.current.getBoundingClientRect().top > window.innerHeight
+    )
+      return;
 
     setIsSequentialPlaying(true);
     setAutoPlayWorkIndex(0);
@@ -346,8 +350,10 @@ export default function Home() {
     // About Section - "See the work in 60 seconds"
     if (aboutVideoRef.current && !playingVideo) {
       const rect = aboutVideoRef.current.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
-      
+      const isInView =
+        rect.top < window.innerHeight * 0.7 &&
+        rect.bottom > window.innerHeight * 0.3;
+
       if (isInView) {
         setShouldAutoPlayAbout(true);
       } else {
@@ -358,8 +364,10 @@ export default function Home() {
     // Case Studies - Himalaya Video
     if (himalayaVideoRef.current && !playingHimalayaVideo) {
       const rect = himalayaVideoRef.current.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
-      
+      const isInView =
+        rect.top < window.innerHeight * 0.7 &&
+        rect.bottom > window.innerHeight * 0.3;
+
       if (isInView) {
         setShouldAutoPlayHimalaya(true);
       } else {
@@ -370,8 +378,10 @@ export default function Home() {
     // Case Studies - Akshaya Video
     if (akshayaVideoRef.current && !playingAkshayaVideo) {
       const rect = akshayaVideoRef.current.getBoundingClientRect();
-      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
-      
+      const isInView =
+        rect.top < window.innerHeight * 0.7 &&
+        rect.bottom > window.innerHeight * 0.3;
+
       if (isInView) {
         setShouldAutoPlayAkshaya(true);
       } else {
@@ -383,7 +393,8 @@ export default function Home() {
     if (workRef.current) {
       const rect = workRef.current.getBoundingClientRect();
       const isWorkInView =
-        rect.top < window.innerHeight * 0.8 && rect.bottom > window.innerHeight * 0.2;
+        rect.top < window.innerHeight * 0.8 &&
+        rect.bottom > window.innerHeight * 0.2;
       if (isWorkInView && autoPlayWorkIndex === -1 && !isSequentialPlaying) {
         setTimeout(startSequentialAutoPlay, 500);
       }
@@ -393,7 +404,9 @@ export default function Home() {
     differenceVideosRef.current.forEach((videoRef, index) => {
       if (videoRef) {
         const rect = videoRef.getBoundingClientRect();
-        const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
+        const isInView =
+          rect.top < window.innerHeight * 0.7 &&
+          rect.bottom > window.innerHeight * 0.3;
         if (isInView && openAccordion === index + 1) {
           videoRef.play();
         } else if (!isInView && openAccordion === index + 1) {
@@ -403,11 +416,11 @@ export default function Home() {
     });
   }, [
     playingVideo,
-    playingHimalayaVideo, 
+    playingHimalayaVideo,
     playingAkshayaVideo,
     autoPlayWorkIndex,
     isSequentialPlaying,
-    openAccordion
+    openAccordion,
   ]);
 
   // MAIN USEEFFECT - FIXED: Empty dependency array
@@ -549,7 +562,9 @@ export default function Home() {
         autoPlayWorkIndex >= 0 &&
         workVideosRef.current[autoPlayWorkIndex]
       ) {
-        const currentIndex = parseInt(workVideosRef.current[autoPlayWorkIndex].dataset.index);
+        const currentIndex = parseInt(
+          workVideosRef.current[autoPlayWorkIndex].dataset.index
+        );
         if (autoPlayWorkIndex === currentIndex) {
           nextSequentialVideo();
         }
@@ -573,7 +588,7 @@ export default function Home() {
         "*"
       );
       setPlayingVideo("about");
-      
+
       const timer = setTimeout(() => {
         if (playingVideo === "about") {
           iframe.contentWindow.postMessage(
@@ -584,21 +599,25 @@ export default function Home() {
           setShouldAutoPlayAbout(false);
         }
       }, 2000); // ✅ CHANGED TO 2 SECONDS
-      
+
       return () => clearTimeout(timer);
     }
   }, [shouldAutoPlayAbout, playingVideo]);
 
   // ✅ FIXED: 2-SECOND AUTO-PAUSE FOR HIMALAYA VIDEO
   useEffect(() => {
-    if (himalayaVideoRef.current && shouldAutoPlayHimalaya && !playingHimalayaVideo) {
+    if (
+      himalayaVideoRef.current &&
+      shouldAutoPlayHimalaya &&
+      !playingHimalayaVideo
+    ) {
       const iframe = himalayaVideoRef.current;
       iframe.contentWindow.postMessage(
         '{"event":"command","func":"playVideo","args":""}',
         "*"
       );
       setPlayingHimalayaVideo(true);
-      
+
       const timer = setTimeout(() => {
         if (playingHimalayaVideo) {
           iframe.contentWindow.postMessage(
@@ -609,21 +628,25 @@ export default function Home() {
           setShouldAutoPlayHimalaya(false);
         }
       }, 2000); // ✅ CHANGED TO 2 SECONDS
-      
+
       return () => clearTimeout(timer);
     }
   }, [shouldAutoPlayHimalaya, playingHimalayaVideo]);
 
   // ✅ FIXED: 2-SECOND AUTO-PAUSE FOR AKSHAYA VIDEO
   useEffect(() => {
-    if (akshayaVideoRef.current && shouldAutoPlayAkshaya && !playingAkshayaVideo) {
+    if (
+      akshayaVideoRef.current &&
+      shouldAutoPlayAkshaya &&
+      !playingAkshayaVideo
+    ) {
       const iframe = akshayaVideoRef.current;
       iframe.contentWindow.postMessage(
         '{"event":"command","func":"playVideo","args":""}',
         "*"
       );
       setPlayingAkshayaVideo(true);
-      
+
       const timer = setTimeout(() => {
         if (playingAkshayaVideo) {
           iframe.contentWindow.postMessage(
@@ -634,7 +657,7 @@ export default function Home() {
           setShouldAutoPlayAkshaya(false);
         }
       }, 2000); // ✅ CHANGED TO 2 SECONDS
-      
+
       return () => clearTimeout(timer);
     }
   }, [shouldAutoPlayAkshaya, playingAkshayaVideo]);
@@ -657,7 +680,7 @@ export default function Home() {
       <header
         className="fixed top-0 w-full h-[450px] sm:h-screen -z-0"
         style={{
-          backgroundImage: `url(${playbackGif.src})`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${playbackGif.src})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
         }}
@@ -667,30 +690,33 @@ export default function Home() {
             <div className="flex-shrink-0">
               <Image src={logo} alt="Wilmarcs Logo" width={140} height={40} />
             </div>
-            <ul className="hidden sm:flex justify-center gap-8 flex-grow">
-              <li>
+            <ul className="hidden sm:flex justify-center gap-14 flex-grow">
+              <li className="group transition-all duration-300 relative flex items-center justify-center">
+                <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
                 <Link
                   href="/#works"
                   onClick={() => scrollToSection(workRef, "works")}
-                  className="primary-font text-white text-md font-semibold hover:text-[#4CAF5080]"
+                  className="relative z-10 primary-font text-white text-md font-semibold"
                 >
                   Works
                 </Link>
               </li>
-              <li>
+              <li className="group relative flex items-center justify-center">
+                <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
                 <Link
                   href="/#difference"
                   onClick={() => scrollToSection(differenceRef, "difference")}
-                  className="primary-font text-white text-md font-semibold hover:text-[#4CAF5080]"
+                  className="elative z-10 primary-font text-white text-md font-semibold"
                 >
                   Difference
                 </Link>
               </li>
-              <li>
+              <li className="group relative flex items-center justify-center">
+                <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
                 <Link
                   href="/#solutions"
                   onClick={() => scrollToSection(solutionsRef, "solutions")}
-                  className="primary-font text-white text-md font-semibold hover:text-[#4CAF5080]"
+                  className="elative z-10 primary-font text-white text-md font-semibold"
                 >
                   Solutions
                 </Link>
@@ -786,7 +812,9 @@ export default function Home() {
               <li>
                 <Button
                   text="Talk to a Producer"
-                  onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
+                  onClick={() =>
+                    scrollToSection(ReadyToRollRef, "ready-to-roll")
+                  }
                   bgColor="rgba(255, 255, 255, 0.3)"
                   fontSize="lg"
                   textColor="#FFFFFF"
@@ -1320,9 +1348,11 @@ export default function Home() {
                             }}
                             src={`${getYouTubeEmbedUrl(
                               item.videoUrl
-                            )}&autoplay=1&mute=1&loop=1&playlist=${item.videoUrl.match(
-                              /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&]+)/
-                            )?.[1]}`}
+                            )}&autoplay=1&mute=1&loop=1&playlist=${
+                              item.videoUrl.match(
+                                /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&]+)/
+                              )?.[1]
+                            }`}
                             title={item.title}
                             className="w-full h-full"
                             frameBorder="0"
@@ -1489,10 +1519,13 @@ export default function Home() {
               {openAccordion !== null && (
                 <div className="relative overflow-hidden w-full h-auto sm:h-[510px] rounded-xl">
                   <video
-                    ref={(el) => (differenceVideosRef.current[openAccordion - 1] = el)}
+                    ref={(el) =>
+                      (differenceVideosRef.current[openAccordion - 1] = el)
+                    }
                     src={
-                      accordianDifference.find((item) => item.id === openAccordion)
-                        .differenceVideo
+                      accordianDifference.find(
+                        (item) => item.id === openAccordion
+                      ).differenceVideo
                     }
                     className="w-full h-full object-cover rounded-xl"
                     muted
@@ -1502,8 +1535,9 @@ export default function Home() {
 
                   <h4 className="w-full rounded-b-xl absolute bottom-0 p-8 bg-black/70 text-white text-[24px] font-semibold z-10">
                     {
-                      accordianDifference.find((item) => item.id === openAccordion)
-                        .caption
+                      accordianDifference.find(
+                        (item) => item.id === openAccordion
+                      ).caption
                     }
                   </h4>
                 </div>
