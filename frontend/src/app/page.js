@@ -203,23 +203,28 @@ import LinkedIn from "@/components/Icons/Likedin";
 
 const faqs = [
   {
-    question: "How fast can you start a project?",
-    answer: "Bengaluru: 3-4 hrs. Other cities: same-day plan, 48-72 hrs start.",
+    question: "1. How fast can you start?",
+    answer: "Bengaluru: 3–4 hrs · Other cities: same-day (~10 hrs).",
   },
   {
     question: "Do you manage permissions and compliance?",
     answer:
-      "Yes, we handle all necessary permissions and ensure full compliance with local regulations and building codes.",
+      "Yes — all NOCs, consents, and permits handled with a compliance pack.",
   },
   {
-    question: "Are you vendor-onboarding ready?",
+    question: "Do you cover all of India?",
     answer:
-      "Absolutely! We have a streamlined vendor onboarding process with verified professionals ready to start.",
+      "Yes — crews active in 20+ states, including remote/forest/coastal regions.",
   },
   {
-    question: "What deliverables are standard?",
+    question: "How do you ensure dignity and safety of beneficiaries?",
     answer:
-      "Standard deliverables include detailed project plans, material specifications, timeline schedules, and quality reports.",
+      "Strict Do-No-Harm, safeguarding, local consents, anonymization if needed.",
+  },
+  {
+    question: "Do you provide translations and accessibility?",
+    answer:
+      "Yes — subtitles standard; dubbing, transcripts, and audio description optional.",
   },
 ];
 
@@ -242,30 +247,19 @@ export default function Home() {
 
   const [autoPlayWorkIndex, setAutoPlayWorkIndex] = useState(-1);
   const [isSequentialPlaying, setIsSequentialPlaying] = useState(false);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(1);
+
   const [playingVideo, setPlayingVideo] = useState(null);
   const [playingHimalayaVideo, setPlayingHimalayaVideo] = useState(false);
   const [playingAkshayaVideo, setPlayingAkshayaVideo] = useState(false);
+
   const [shouldAutoPlayAbout, setShouldAutoPlayAbout] = useState(false);
   const [shouldAutoPlayHimalaya, setShouldAutoPlayHimalaya] = useState(false);
   const [shouldAutoPlayAkshaya, setShouldAutoPlayAkshaya] = useState(false);
-  const [openIndex, setOpenIndex] = useState(0);
 
-  const scrollToSection = useCallback((ref, sectionId) => {
-    if (ref.current) {
-      gsap.to(window, {
-        scrollTo: {
-          y: ref.current,
-          offsetY: 80,
-        },
-        duration: 1,
-        ease: "power2.out",
-      });
-      window.history.pushState(null, null, `/#${sectionId}`);
-    }
-    setIsMenuOpen(false);
-  }, []);
+  const [openIndex, setOpenIndex] = useState(0);
 
   const toggleAccordion = (id) => {
     if (openAccordion === id) {
@@ -291,6 +285,21 @@ export default function Home() {
 
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? null : index);
+  };
+
+  const scrollToSection = (ref, sectionId) => {
+    if (ref.current) {
+      gsap.to(window, {
+        scrollTo: {
+          y: ref.current,
+          offsetY: 80,
+        },
+        duration: 1,
+        ease: "power2.out",
+      });
+      router.push(`/#${sectionId}`, { scroll: false });
+    }
+    setIsMenuOpen(false);
   };
 
   const toggleMenu = () => {
@@ -560,31 +569,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '');
-      const targetRef = {
-        about: aboutRef,
-        works: workRef,
-        difference: differenceRef,
-        solutions: solutionsRef,
-        'ready-to-roll': ReadyToRollRef,
-      }[hash];
-
-      if (targetRef?.current) {
-        gsap.to(window, {
-          scrollTo: { y: targetRef.current, offsetY: 80 },
-          duration: 1,
-          ease: "power2.out",
-        });
-      }
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    handleHashChange();
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
-
-  useEffect(() => {
     if (aboutVideoRef.current && shouldAutoPlayAbout && !playingVideo) {
       const iframe = aboutVideoRef.current;
       iframe.contentWindow.postMessage(
@@ -692,10 +676,11 @@ export default function Home() {
               <Image src={logo} alt="Wilmarcs Logo" width={140} height={40} />
             </div>
             <ul className="hidden sm:flex justify-center gap-14 flex-grow">
-              <li className="group transition-all duration-300 relative flex items-center justify-center">
+              <li className="group relative flex items-center justify-center">
                 <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
                 <Link
                   href="/#works"
+                  onClick={() => scrollToSection(workRef, "works")}
                   className="relative z-10 primary-font text-white text-md font-semibold"
                 >
                   Works
@@ -705,7 +690,8 @@ export default function Home() {
                 <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
                 <Link
                   href="/#difference"
-                  className="elative z-10 primary-font text-white text-md font-semibold"
+                  onClick={() => scrollToSection(differenceRef, "difference")}
+                  className="relative z-10 primary-font text-white text-md font-semibold"
                 >
                   Difference
                 </Link>
@@ -714,7 +700,8 @@ export default function Home() {
                 <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
                 <Link
                   href="/#solutions"
-                  className="elative z-10 primary-font text-white text-md font-semibold"
+                  onClick={() => scrollToSection(solutionsRef, "solutions")}
+                  className="relative z-10 primary-font text-white text-md font-semibold"
                 >
                   Solutions
                 </Link>
@@ -723,7 +710,7 @@ export default function Home() {
             <div className="hidden sm:flex flex-shrink-0">
               <Button
                 text="Talk to a Producer"
-                href="/#ready-to-roll"
+                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
                 bgColor="rgba(255, 255, 255, 0.3)"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -783,6 +770,7 @@ export default function Home() {
               <li>
                 <Link
                   href="/#works"
+                  onClick={() => scrollToSection(workRef, "works")}
                   className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
                 >
                   Works
@@ -791,6 +779,7 @@ export default function Home() {
               <li>
                 <Link
                   href="/#difference"
+                  onClick={() => scrollToSection(differenceRef, "difference")}
                   className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
                 >
                   Difference
@@ -799,6 +788,7 @@ export default function Home() {
               <li>
                 <Link
                   href="/#solutions"
+                  onClick={() => scrollToSection(solutionsRef, "solutions")}
                   className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
                 >
                   Solutions
@@ -807,7 +797,9 @@ export default function Home() {
               <li>
                 <Button
                   text="Talk to a Producer"
-                  href="/#ready-to-roll"
+                  onClick={() =>
+                    scrollToSection(ReadyToRollRef, "ready-to-roll")
+                  }
                   bgColor="rgba(255, 255, 255, 0.3)"
                   fontSize="lg"
                   textColor="#FFFFFF"
@@ -834,7 +826,7 @@ export default function Home() {
           </p>
           <Button
             text="Start Your Project"
-            href="/#ready-to-roll"
+            onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
             bgColor="rgba(255, 255, 255)"
             fontSize="md"
             textColor="#000"
@@ -891,10 +883,7 @@ export default function Home() {
           id="about"
           className="container min-h-auto pt-6 sm:pt-16 relative z-10"
           style={{ backgroundColor: "#ffffff" }}
-          ref={(el) => {
-            aboutRef.current = el;
-            aboutCountRef.current = el;
-          }}
+          ref={aboutRef}
         >
           <div className="flex flex-col sm:flex-row w-full gap-8">
             <div className="w-full sm:w-[45%]">
@@ -974,7 +963,7 @@ export default function Home() {
                 titleClass="mb-3 text-black text-center sm:text-left"
                 descriptionClass="text-[#555555] text-center sm:text-left"
               />
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+              <div ref={aboutCountRef} className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
                 {aboutCount.map((count) => (
                   <div
                     className="hover:bg-[#4CAF50] transition-all duration-300 hover:text-white border border-[#D6D6D6] p-8 flex flex-col justify-center items-center rounded-3xl space-y-4"
@@ -993,7 +982,9 @@ export default function Home() {
                 <Button
                   text="Start Your Project"
                   icon={true}
-                  href="/#ready-to-roll"
+                  onClick={() =>
+                    scrollToSection(ReadyToRollRef, "ready-to-roll")
+                  }
                   bgColor="#000"
                   fontSize="md"
                   textColor="#FFFFFF"
@@ -1255,7 +1246,7 @@ export default function Home() {
                 text="Start Your Project"
                 icon={true}
                 isIconLeft={true}
-                href="/#ready-to-roll"
+                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
                 bgColor="#4CAF50"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -1268,9 +1259,9 @@ export default function Home() {
         </section>
 
         <section
-          id="works"
           className="min-h-auto relative z-10"
           style={{ backgroundColor: "#F6EDD9" }}
+          id="works"
           ref={workRef}
         >
           <div className="container py-4 sm:py-16 space-y-4 sm:space-y-16">
@@ -1430,7 +1421,7 @@ export default function Home() {
               <Button
                 text="Start Your Project"
                 icon={true}
-                href="/#ready-to-roll"
+                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
                 bgColor="#000"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -1443,8 +1434,8 @@ export default function Home() {
         </section>
 
         <section
-          id="difference"
           className="container py-6 sm:py-16 min-h-auto relative z-10"
+          id="difference"
           ref={differenceRef}
         >
           <div className="w-full">
@@ -1539,9 +1530,9 @@ export default function Home() {
         </section>
 
         <section
-          id="solutions"
           className="relative z-10 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${whatWeDoBg.src})` }}
+          id="solutions"
           ref={solutionsRef}
         >
           <div className="bg-black/50">
@@ -1890,8 +1881,8 @@ export default function Home() {
         </section>
 
         <section
-          id="ready-to-roll"
           className="min-h-auto relative z-10"
+          id="ready-to-roll"
           ref={ReadyToRollRef}
         >
           <div className="container py-6 sm:py-16 space-y-4 sm:space-y-16">
@@ -1929,24 +1920,28 @@ export default function Home() {
           <div className="py-6 flex items-center justify-center sm:justify-start primary-font text-[16px] text-[#0A142F] space-x-8">
             <Link
               href="/#about"
+              onClick={() => scrollToSection(aboutRef, "about")}
               className="hover:text-gray-800"
             >
               About us
             </Link>
             <Link
               href="/#difference"
+              onClick={() => scrollToSection(differenceRef, "difference")}
               className="hover:text-gray-800"
             >
               Difference
             </Link>
             <Link
               href="/#works"
+              onClick={() => scrollToSection(workRef, "works")}
               className="hover:text-gray-800"
             >
               Work
             </Link>
             <Link
               href="/#solutions"
+              onClick={() => scrollToSection(solutionsRef, "solutions")}
               className="hover:text-gray-800"
             >
               Solutions
