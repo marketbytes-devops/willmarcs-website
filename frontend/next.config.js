@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export', 
+  basePath: '/landing',
+
   webpack: (config) => {
     config.module.rules.push({
       test: /\.(mp4|webm)$/,
