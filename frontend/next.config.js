@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: 'export', 
-  // basePath: '/csr-videos-wilmarcs',
+  output: 'export', 
+  basePath: '/csr-videos-wilmarcs',
   
   images: {
     unoptimized: true 

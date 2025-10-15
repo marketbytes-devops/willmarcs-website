@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation"; 
 import emailjs from "@emailjs/browser";
 import HorseWhite from "@/components/Icons/HorseWhite";
 
 const Form = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -12,8 +14,6 @@ const Form = () => {
   } = useForm({
     mode: "onChange",
   });
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onSubmit = async (data) => {
     try {
@@ -33,15 +33,11 @@ const Form = () => {
 
       console.log("Email sent successfully:", response.status, response.text);
       reset();
-      setIsModalOpen(true);
+      router.push("/thank-you"); 
     } catch (error) {
       console.error("Failed to send email:", error);
       alert("Failed to send enquiry. Please try again.");
     }
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
   };
 
   return (
@@ -167,30 +163,6 @@ const Form = () => {
           </span>
         </button>
       </form>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 backdrop-brightness-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-            <h3 className="secondary-font text-xl md:text-4xl font-bold mb-4 text-center">
-              Thank You!
-            </h3>
-            <p className="primary-font text-base md:text-[18px] mb-6 text-center">
-              Your enquiry has been sent successfully. We&apos;ll get back to
-              you soon!
-            </p>
-            <button
-              onClick={closeModal}
-              className="w-full flex items-center justify-center text-white p-3 rounded transition-all duration-300 hover:opacity-90"
-              style={{
-                background: "linear-gradient(to right, #9AD59C, #17921C)",
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
