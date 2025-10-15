@@ -234,33 +234,38 @@ export default function Home() {
   const aboutCountRef = useRef(null);
   const ReadyToRollRef = useRef(null);
 
-  // VIDEO REFS FOR AUTO-PLAY
   const aboutVideoRef = useRef(null);
   const himalayaVideoRef = useRef(null);
   const akshayaVideoRef = useRef(null);
   const workVideosRef = useRef([]);
   const differenceVideosRef = useRef([]);
 
-  // SEQUENTIAL AUTO-PLAY STATE FOR WORK SECTION
   const [autoPlayWorkIndex, setAutoPlayWorkIndex] = useState(-1);
   const [isSequentialPlaying, setIsSequentialPlaying] = useState(false);
-
-  // MENU STATE
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(1);
-
-  // VIDEO PLAYBACK STATES
   const [playingVideo, setPlayingVideo] = useState(null);
   const [playingHimalayaVideo, setPlayingHimalayaVideo] = useState(false);
   const [playingAkshayaVideo, setPlayingAkshayaVideo] = useState(false);
-
-  // SCROLL-BASED AUTOPLAY STATES (NEW)
   const [shouldAutoPlayAbout, setShouldAutoPlayAbout] = useState(false);
   const [shouldAutoPlayHimalaya, setShouldAutoPlayHimalaya] = useState(false);
   const [shouldAutoPlayAkshaya, setShouldAutoPlayAkshaya] = useState(false);
-
-  // FAQ STATE
   const [openIndex, setOpenIndex] = useState(0);
+
+  const scrollToSection = useCallback((ref, sectionId) => {
+    if (ref.current) {
+      gsap.to(window, {
+        scrollTo: {
+          y: ref.current,
+          offsetY: 80,
+        },
+        duration: 1,
+        ease: "power2.out",
+      });
+      window.history.pushState(null, null, `/#${sectionId}`);
+    }
+    setIsMenuOpen(false);
+  }, []);
 
   const toggleAccordion = (id) => {
     if (openAccordion === id) {
@@ -286,21 +291,6 @@ export default function Home() {
 
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? null : index);
-  };
-
-  const scrollToSection = (ref, sectionId) => {
-    if (ref.current) {
-      gsap.to(window, {
-        scrollTo: {
-          y: ref.current,
-          offsetY: 80,
-        },
-        duration: 1,
-        ease: "power2.out",
-      });
-      router.push(`/#${sectionId}`, { scroll: false });
-    }
-    setIsMenuOpen(false);
   };
 
   const toggleMenu = () => {
@@ -345,9 +335,7 @@ export default function Home() {
     }
   };
 
-  // FIXED: SCROLL-BASED AUTOPLAY FUNCTION
   const autoPlayVideosOnScroll = useCallback(() => {
-    // About Section - "See the work in 60 seconds"
     if (aboutVideoRef.current && !playingVideo) {
       const rect = aboutVideoRef.current.getBoundingClientRect();
       const isInView =
@@ -361,7 +349,6 @@ export default function Home() {
       }
     }
 
-    // Case Studies - Himalaya Video
     if (himalayaVideoRef.current && !playingHimalayaVideo) {
       const rect = himalayaVideoRef.current.getBoundingClientRect();
       const isInView =
@@ -375,7 +362,6 @@ export default function Home() {
       }
     }
 
-    // Case Studies - Akshaya Video
     if (akshayaVideoRef.current && !playingAkshayaVideo) {
       const rect = akshayaVideoRef.current.getBoundingClientRect();
       const isInView =
@@ -389,7 +375,6 @@ export default function Home() {
       }
     }
 
-    // Work Section
     if (workRef.current) {
       const rect = workRef.current.getBoundingClientRect();
       const isWorkInView =
@@ -400,7 +385,6 @@ export default function Home() {
       }
     }
 
-    // Difference Videos
     differenceVideosRef.current.forEach((videoRef, index) => {
       if (videoRef) {
         const rect = videoRef.getBoundingClientRect();
@@ -423,9 +407,7 @@ export default function Home() {
     openAccordion,
   ]);
 
-  // MAIN USEEFFECT - FIXED: Empty dependency array
   useEffect(() => {
-    // GSAP Animations
     gsap.fromTo(
       aboutRef.current,
       { opacity: 0, y: 50 },
@@ -544,21 +526,19 @@ export default function Home() {
       });
     }
 
-    // FIXED: SCROLL LISTENER - Only runs once
     const handleScroll = () => {
       autoPlayVideosOnScroll();
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Initial check
+    handleScroll();
 
-    // Handle video end for sequential play in Work section
     const handleMessage = (event) => {
       if (event.origin !== "https://www.youtube.com") return;
       const data = JSON.parse(event.data);
       if (
         data.event === "onStateChange" &&
-        data.info === 0 && // Video ended
+        data.info === 0 &&
         autoPlayWorkIndex >= 0 &&
         workVideosRef.current[autoPlayWorkIndex]
       ) {
@@ -577,9 +557,33 @@ export default function Home() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("message", handleMessage);
     };
-  }, []); // FIXED: Empty dependency array
+  }, []);
 
-  // ✅ FIXED: 2-SECOND AUTO-PAUSE FOR ABOUT VIDEO
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const targetRef = {
+        about: aboutRef,
+        works: workRef,
+        difference: differenceRef,
+        solutions: solutionsRef,
+        'ready-to-roll': ReadyToRollRef,
+      }[hash];
+
+      if (targetRef?.current) {
+        gsap.to(window, {
+          scrollTo: { y: targetRef.current, offsetY: 80 },
+          duration: 1,
+          ease: "power2.out",
+        });
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange();
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   useEffect(() => {
     if (aboutVideoRef.current && shouldAutoPlayAbout && !playingVideo) {
       const iframe = aboutVideoRef.current;
@@ -598,13 +602,12 @@ export default function Home() {
           setPlayingVideo(null);
           setShouldAutoPlayAbout(false);
         }
-      }, 2000); // ✅ CHANGED TO 2 SECONDS
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
   }, [shouldAutoPlayAbout, playingVideo]);
 
-  // ✅ FIXED: 2-SECOND AUTO-PAUSE FOR HIMALAYA VIDEO
   useEffect(() => {
     if (
       himalayaVideoRef.current &&
@@ -627,13 +630,12 @@ export default function Home() {
           setPlayingHimalayaVideo(false);
           setShouldAutoPlayHimalaya(false);
         }
-      }, 2000); // ✅ CHANGED TO 2 SECONDS
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
   }, [shouldAutoPlayHimalaya, playingHimalayaVideo]);
 
-  // ✅ FIXED: 2-SECOND AUTO-PAUSE FOR AKSHAYA VIDEO
   useEffect(() => {
     if (
       akshayaVideoRef.current &&
@@ -656,13 +658,12 @@ export default function Home() {
           setPlayingAkshayaVideo(false);
           setShouldAutoPlayAkshaya(false);
         }
-      }, 2000); // ✅ CHANGED TO 2 SECONDS
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
   }, [shouldAutoPlayAkshaya, playingAkshayaVideo]);
 
-  // PAUSE VIDEOS WHEN USER CLICKS
   useEffect(() => {
     if (playingVideo !== null && playingVideo !== "about") {
       setShouldAutoPlayAbout(false);
@@ -695,7 +696,6 @@ export default function Home() {
                 <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
                 <Link
                   href="/#works"
-                  onClick={() => scrollToSection(workRef, "works")}
                   className="relative z-10 primary-font text-white text-md font-semibold"
                 >
                   Works
@@ -705,7 +705,6 @@ export default function Home() {
                 <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
                 <Link
                   href="/#difference"
-                  onClick={() => scrollToSection(differenceRef, "difference")}
                   className="elative z-10 primary-font text-white text-md font-semibold"
                 >
                   Difference
@@ -715,7 +714,6 @@ export default function Home() {
                 <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
                 <Link
                   href="/#solutions"
-                  onClick={() => scrollToSection(solutionsRef, "solutions")}
                   className="elative z-10 primary-font text-white text-md font-semibold"
                 >
                   Solutions
@@ -725,7 +723,7 @@ export default function Home() {
             <div className="hidden sm:flex flex-shrink-0">
               <Button
                 text="Talk to a Producer"
-                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
+                href="/#ready-to-roll"
                 bgColor="rgba(255, 255, 255, 0.3)"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -785,7 +783,6 @@ export default function Home() {
               <li>
                 <Link
                   href="/#works"
-                  onClick={() => scrollToSection(workRef, "works")}
                   className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
                 >
                   Works
@@ -794,7 +791,6 @@ export default function Home() {
               <li>
                 <Link
                   href="/#difference"
-                  onClick={() => scrollToSection(differenceRef, "difference")}
                   className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
                 >
                   Difference
@@ -803,7 +799,6 @@ export default function Home() {
               <li>
                 <Link
                   href="/#solutions"
-                  onClick={() => scrollToSection(solutionsRef, "solutions")}
                   className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
                 >
                   Solutions
@@ -812,9 +807,7 @@ export default function Home() {
               <li>
                 <Button
                   text="Talk to a Producer"
-                  onClick={() =>
-                    scrollToSection(ReadyToRollRef, "ready-to-roll")
-                  }
+                  href="/#ready-to-roll"
                   bgColor="rgba(255, 255, 255, 0.3)"
                   fontSize="lg"
                   textColor="#FFFFFF"
@@ -841,7 +834,7 @@ export default function Home() {
           </p>
           <Button
             text="Start Your Project"
-            onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
+            href="/#ready-to-roll"
             bgColor="rgba(255, 255, 255)"
             fontSize="md"
             textColor="#000"
@@ -895,6 +888,7 @@ export default function Home() {
         </section>
 
         <section
+          id="about"
           className="container min-h-auto pt-6 sm:pt-16 relative z-10"
           style={{ backgroundColor: "#ffffff" }}
           ref={(el) => {
@@ -999,9 +993,7 @@ export default function Home() {
                 <Button
                   text="Start Your Project"
                   icon={true}
-                  onClick={() =>
-                    scrollToSection(ReadyToRollRef, "ready-to-roll")
-                  }
+                  href="/#ready-to-roll"
                   bgColor="#000"
                   fontSize="md"
                   textColor="#FFFFFF"
@@ -1263,7 +1255,7 @@ export default function Home() {
                 text="Start Your Project"
                 icon={true}
                 isIconLeft={true}
-                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
+                href="/#ready-to-roll"
                 bgColor="#4CAF50"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -1276,9 +1268,9 @@ export default function Home() {
         </section>
 
         <section
+          id="works"
           className="min-h-auto relative z-10"
           style={{ backgroundColor: "#F6EDD9" }}
-          id="works"
           ref={workRef}
         >
           <div className="container py-4 sm:py-16 space-y-4 sm:space-y-16">
@@ -1438,7 +1430,7 @@ export default function Home() {
               <Button
                 text="Start Your Project"
                 icon={true}
-                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
+                href="/#ready-to-roll"
                 bgColor="#000"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -1451,8 +1443,8 @@ export default function Home() {
         </section>
 
         <section
-          className="container py-6 sm:py-16 min-h-auto relative z-10"
           id="difference"
+          className="container py-6 sm:py-16 min-h-auto relative z-10"
           ref={differenceRef}
         >
           <div className="w-full">
@@ -1547,6 +1539,7 @@ export default function Home() {
         </section>
 
         <section
+          id="solutions"
           className="relative z-10 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${whatWeDoBg.src})` }}
           ref={solutionsRef}
@@ -1897,8 +1890,8 @@ export default function Home() {
         </section>
 
         <section
-          className="min-h-auto relative z-10"
           id="ready-to-roll"
+          className="min-h-auto relative z-10"
           ref={ReadyToRollRef}
         >
           <div className="container py-6 sm:py-16 space-y-4 sm:space-y-16">
@@ -1936,28 +1929,24 @@ export default function Home() {
           <div className="py-6 flex items-center justify-center sm:justify-start primary-font text-[16px] text-[#0A142F] space-x-8">
             <Link
               href="/#about"
-              onClick={() => scrollToSection(aboutRef, "about")}
               className="hover:text-gray-800"
             >
               About us
             </Link>
             <Link
               href="/#difference"
-              onClick={() => scrollToSection(differenceRef, "difference")}
               className="hover:text-gray-800"
             >
               Difference
             </Link>
             <Link
               href="/#works"
-              onClick={() => scrollToSection(workRef, "works")}
               className="hover:text-gray-800"
             >
               Work
             </Link>
             <Link
               href="/#solutions"
-              onClick={() => scrollToSection(solutionsRef, "solutions")}
               className="hover:text-gray-800"
             >
               Solutions
