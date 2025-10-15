@@ -247,6 +247,14 @@ export default function Home() {
   const aboutCountRef = useRef(null);
   const imageRef = useRef(null);
   const ReadyToRollRef = useRef(null);
+  
+  // NEW: Refs for auto-play videos
+  const himalayaVideoRef = useRef(null);
+  const akshayaVideoRef = useRef(null);
+  const aboutVideoRef = useRef(null);
+  const workVideosRef = useRef([]);
+  const differenceVideoRef = useRef(null);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(1);
   const [playingVideo, setPlayingVideo] = useState(null);
@@ -326,6 +334,62 @@ export default function Home() {
       /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&]+)/
     )?.[1];
     return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : "";
+  };
+
+  // NEW: Auto-play videos on scroll function
+  const autoPlayVideosOnScroll = () => {
+    // Himalaya Video Auto-play
+    if (himalayaVideoRef.current && himalayaVideoRef.current.contentWindow) {
+      const rect = himalayaVideoRef.current.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
+      if (isInView && !playingHimalayaVideo) {
+        setPlayingHimalayaVideo(true);
+      } else if (!isInView && playingHimalayaVideo) {
+        setPlayingHimalayaVideo(false);
+      }
+    }
+
+    // Akshaya Video Auto-play
+    if (akshayaVideoRef.current && akshayaVideoRef.current.contentWindow) {
+      const rect = akshayaVideoRef.current.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
+      if (isInView && !playingAkshayaVideo) {
+        setPlayingAkshayaVideo(true);
+      } else if (!isInView && playingAkshayaVideo) {
+        setPlayingAkshayaVideo(false);
+      }
+    }
+
+    // About Video Auto-play
+    if (aboutVideoRef.current && aboutVideoRef.current.contentWindow) {
+      const rect = aboutVideoRef.current.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
+      if (isInView && playingVideo !== "about") {
+        setPlayingVideo("about");
+      } else if (!isInView && playingVideo === "about") {
+        setPlayingVideo(null);
+      }
+    }
+
+    // Work Videos Auto-play
+    workVideosRef.current.forEach((videoRef, index) => {
+      if (videoRef && videoRef.contentWindow) {
+        const rect = videoRef.getBoundingClientRect();
+        const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
+        if (isInView && playingVideo !== index) {
+          setPlayingVideo(index);
+        }
+      }
+    });
+
+    // Difference Video Auto-play
+    if (differenceVideoRef.current) {
+      const rect = differenceVideoRef.current.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > window.innerHeight * 0.3;
+      if (isInView && playingVideoId !== openAccordion) {
+        setPlayingVideoId(openAccordion);
+      }
+    }
   };
 
   useEffect(() => {
@@ -455,10 +519,19 @@ export default function Home() {
       );
     }
 
+    // NEW: Scroll listener for auto-play videos
+    const handleScroll = () => {
+      autoPlayVideosOnScroll();
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial check
+
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      window.removeEventListener('scroll', handleScroll);
     };
-  }, [openAccordion]);
+  }, [openAccordion, playingHimalayaVideo, playingAkshayaVideo, playingVideo, playingVideoId]);
 
   return (
     <>
@@ -701,7 +774,8 @@ export default function Home() {
                 {playingVideo === "about" ? (
                   <div className="relative w-full h-full">
                     <iframe
-                      src="https://www.youtube.com/embed/gwkQYgElMtQ?autoplay=1"
+                      ref={aboutVideoRef}
+                      src="https://www.youtube.com/embed/gwkQYgElMtQ?autoplay=1&mute=1&loop=1&playlist=gwkQYgElMtQ"
                       title="See the work in 60 seconds"
                       className="w-full h-full"
                       frameBorder="0"
@@ -763,7 +837,7 @@ export default function Home() {
               </p>
               <TitleDescription
                 title="Transforming Ideas Into Visual Excellence"
-                description="We bring your vision to life through dynamic videos, animations, and photography. Focusing on creative storytelling and technical excellence, our tailored solutions capture your brand’s essence and deliver messages that resonate with your audience across every digital platform and business opportunity."
+                description="We bring your vision to life through dynamic videos, animations, and photography. Focusing on creative storytelling and technical excellence, our tailored solutions capture your brand's essence and deliver messages that resonate with your audience across every digital platform and business opportunity."
                 titleClass="mb-3 text-black text-center sm:text-left"
                 descriptionClass="text-[#555555] text-center sm:text-left"
               />
@@ -824,7 +898,8 @@ export default function Home() {
                   {playingHimalayaVideo ? (
                     <div className="relative w-full h-full">
                       <iframe
-                        src="https://www.youtube.com/embed/tzIq68pUFRU?autoplay=1"
+                        ref={himalayaVideoRef}
+                        src="https://www.youtube.com/embed/tzIq68pUFRU?autoplay=1&mute=1&loop=1&playlist=tzIq68pUFRU"
                         title="Himalaya Wellness – Mangrove Restoration Film"
                         className="w-full h-auto sm:h-[350px] rounded-xl"
                         frameBorder="0"
@@ -979,7 +1054,8 @@ export default function Home() {
                   {playingAkshayaVideo ? (
                     <div className="relative w-full h-full">
                       <iframe
-                        src="https://www.youtube.com/embed/aVyfbWWIK6w?autoplay=1"
+                        ref={akshayaVideoRef}
+                        src="https://www.youtube.com/embed/aVyfbWWIK6w?autoplay=1&mute=1&loop=1&playlist=aVyfbWWIK6w"
                         title="Akshaya Patra – Nationwide Documentary (UN Showcase)"
                         className="w-full h-auto sm:h-[350px] rounded-xl"
                         frameBorder="0"
@@ -1076,7 +1152,7 @@ export default function Home() {
             <div className="w-full">
               <TitleDescription
                 title="Our Work"
-                description="From CSR impact films to major corporate launches—here’s a quick look."
+                description="From CSR impact films to major corporate launches—here's a quick look."
                 titleClass="mb-3 text-black text-center"
                 descriptionClass="text-black text-center max-w-full sm:max-w-xl mx-auto"
               />
@@ -1128,7 +1204,8 @@ export default function Home() {
                     {playingVideo === index ? (
                       <div className="relative w-full h-full">
                         <iframe
-                          src={getYouTubeEmbedUrl(item.videoUrl)}
+                          ref={(el) => (workVideosRef.current[index] = el)}
+                          src={`${getYouTubeEmbedUrl(item.videoUrl)}&autoplay=1&mute=1&loop=1&playlist=${item.videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&]+)/)?.[1]}`}
                           title={item.title}
                           className="w-full h-full"
                           frameBorder="0"
@@ -1300,6 +1377,7 @@ export default function Home() {
                   {playingVideoId === openAccordion ? (
                     <div className="relative w-full h-full">
                       <video
+                        ref={differenceVideoRef}
                         src={
                           accordianDifference.find(
                             (item) => item.id === openAccordion
@@ -1309,6 +1387,7 @@ export default function Home() {
                         controls
                         autoPlay
                         muted
+                        loop
                         onEnded={() => setPlayingVideoId(null)}
                       />
                       <button
