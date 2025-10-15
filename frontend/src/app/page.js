@@ -209,8 +209,6 @@ import secondFooterImage from "@/assets/images/wilmarcs-footer-logo.png";
 import AngleDown from "@/components/Icons/AngleDown";
 import AngleRight from "@/components/Icons/AngleRight";
 import Facebook from "@/components/Icons/Facebook";
-import Twitter from "@/components/Icons/Twitter";
-import Vimeo from "@/components/Icons/Vimeo";
 import Youtube from "@/components/Icons/Youtube";
 import Progress from "@/components/Progess";
 import Instagram from "@/components/Icons/Instagram";
@@ -599,10 +597,9 @@ export default function Home() {
               <li>
                 <Button
                   text="Talk to a Producer"
-                  onClick={() => {
-                    alert("Contact Producer");
-                    setIsMenuOpen(false);
-                  }}
+                  onClick={() =>
+                    scrollToSection(ReadyToRollRef, "ready-to-roll")
+                  }
                   bgColor="rgba(255, 255, 255, 0.3)"
                   fontSize="lg"
                   textColor="#FFFFFF"
@@ -688,7 +685,10 @@ export default function Home() {
         <section
           className="container min-h-auto pt-6 sm:pt-16 relative z-10"
           style={{ backgroundColor: "#ffffff" }}
-          ref={aboutCountRef}
+          ref={(el) => {
+            aboutRef.current = el;
+            aboutCountRef.current = el;
+          }}
         >
           <div className="flex flex-col sm:flex-row w-full gap-8">
             <div className="w-full sm:w-[45%]">
@@ -1395,7 +1395,7 @@ export default function Home() {
         <section
           className="relative z-10 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${whatWeDoBg.src})` }}
-          ref={aboutRef}
+          ref={solutionsRef}
         >
           <div className="bg-black/50">
             <div className="container mx-auto py-12 sm:py-20 px-4">
@@ -1543,7 +1543,8 @@ export default function Home() {
               />
             </div>
             <div className="w-full pb-4 sm:pb-16 pt-8">
-              <Slider
+              <Slider 
+              className="slick-slider"
                 {...{
                   dots: true,
                   infinite: true,
@@ -1556,7 +1557,7 @@ export default function Home() {
                   arrows: false,
                   responsive: [
                     {
-                      breakpoint: 1024, 
+                      breakpoint: 1024,
                       settings: {
                         slidesToShow: 2,
                         slidesToScroll: 1,
@@ -1565,7 +1566,7 @@ export default function Home() {
                     {
                       breakpoint: 640,
                       settings: {
-                        slidesToShow: 1, 
+                        slidesToShow: 1,
                         slidesToScroll: 1,
                         dots: true,
                         arrows: false,
