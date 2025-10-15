@@ -1542,49 +1542,88 @@ export default function Home() {
                 description={false}
               />
             </div>
-            <div className="w-full pb-4 sm:pb-16 pt-8">
+
+            <div className="hidden lg:grid lg:grid-cols-3 gap-6 pb-4 sm:pb-16 pt-12 sm:pt-16">
+              {testimonials.map((testimonial, index) => (
+                <div key={index} className="px-0">
+                  <div className="relative bg-white rounded-xl shadow-sm shadow-gray-300 p-4 h-[370px] flex flex-col transition-transform duration-300 hover:shadow-md hover:shadow-gray-300 hover:-translate-y-1">
+                    <div className="flex justify-between mb-3">
+                      <div
+                        className="relative -top-14 w-20 h-20 border border-gray-200 rounded-full flex items-center justify-center text-4xl"
+                        style={{
+                          backgroundColor: testimonial.backgroundColor,
+                        }}
+                      >
+                        <Image
+                          src={testimonial.logo}
+                          alt={testimonial.company}
+                          width={50}
+                          height={50}
+                          className="object-contain rounded-full"
+                        />
+                      </div>
+                      <div className="flex justify-center mb-6">
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <svg
+                            key={i}
+                            className="w-4 h-4 text-[#EBBC00] fill-current"
+                            width="18"
+                            height="17"
+                            viewBox="0 0 18 17"
+                          >
+                            <path d="M8.32121 1.27605C8.53098 0.589673 9.50267 0.589674 9.71244 1.27605L11.0473 5.64375C11.1422 5.95414 11.4312 6.16412 11.7557 6.15842L16.3221 6.07827C17.0397 6.06568 17.34 6.98981 16.7521 7.40142L13.0106 10.0207C12.7447 10.2068 12.6343 10.5465 12.74 10.8534L14.2274 15.1716C14.4611 15.8502 13.675 16.4213 13.1018 15.9893L9.45463 13.2404C9.19545 13.0451 8.8382 13.0451 8.57902 13.2404L4.93181 15.9893C4.35866 16.4213 3.57255 15.8502 3.80628 15.1716L5.29361 10.8534C5.3993 10.5465 5.28891 10.2068 5.02303 10.0207L1.2816 7.40142C0.693639 6.98981 0.993907 6.06568 1.71151 6.07827L6.27795 6.15842C6.60245 6.16412 6.89147 5.95414 6.98633 5.64375L8.32121 1.27605Z" />
+                          </svg>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="relative -top-10">
+                      <p className="primary-font text-base md:text-[18px] leading-relaxed flex-grow">
+                        {testimonial.text}
+                      </p>
+                    </div>
+                    <div className="absolute bottom-4">
+                      <p className="primary-font text-base md:text-[18px] font-semibold">
+                        {testimonial.name}
+                      </p>
+                      <p className="primary-font text-[#505050] text-xs mt-1">
+                        {testimonial.company}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="lg:hidden pb-4 sm:pb-16 pt-8">
               <Slider
-                className="slick-slider"
                 {...{
                   dots: true,
                   infinite: true,
                   speed: 500,
-                  slidesToShow: 3,
+                  slidesToShow: 1,
                   slidesToScroll: 1,
                   autoplay: true,
                   autoplaySpeed: 5000,
                   pauseOnHover: true,
                   arrows: false,
-                  centerMode: false,
-                  variableWidth: false,
+                  centerMode: true,
+                  centerPadding: "0px",
                   responsive: [
                     {
                       breakpoint: 1024,
                       settings: {
-                        slidesToShow: 3,
+                        slidesToShow: 1,
                         slidesToScroll: 1,
-                        centerMode: false,
+                        centerMode: true,
+                        centerPadding: "0px",
                       },
                     },
                     {
                       breakpoint: 768,
                       settings: {
-                        slidesToShow: 3,
-                        slidesToScroll: 1,
-                        dots: true,
-                        arrows: false,
-                        centerMode: false,
-                        centerPadding: "0px",
-                      },
-                    },
-                    {
-                      breakpoint: 640,
-                      settings: {
                         slidesToShow: 1,
                         slidesToScroll: 1,
-                        dots: true,
-                        arrows: false,
-                        centerMode: false,
+                        centerMode: true,
                         centerPadding: "0px",
                       },
                     },
@@ -1592,11 +1631,11 @@ export default function Home() {
                 }}
               >
                 {testimonials.map((testimonial, index) => (
-                  <div key={index} className="px-0 sm:px-3 pt-12 sm:pt-16 pb-3">
-                    <div className="mx-4 sm:mx-0 relative bg-white rounded-xl shadow-sm shadow-gray-300 p-4 h-[370px] flex flex-col transition-transform duration-300 hover:shadow-md hover:shadow-gray-300 hover:-translate-y-1">
+                  <div key={index} className="px-2 pb-4">
+                    <div className="relative bg-white rounded-xl shadow-sm shadow-gray-300 p-4 h-auto flex flex-col transition-transform duration-300">
                       <div className="flex justify-between mb-3">
                         <div
-                          className="relative -top-14 w-20 h-20 border border-gray-200 rounded-full flex items-center justify-center text-4xl"
+                          className="relative -top-0 w-20 h-20 border border-gray-200 rounded-full flex items-center justify-center text-4xl"
                           style={{
                             backgroundColor: testimonial.backgroundColor,
                           }}
@@ -1609,7 +1648,7 @@ export default function Home() {
                             className="object-contain rounded-full"
                           />
                         </div>
-                        <div className="flex justify-center mb-6">
+                        <div className="flex justify-center relative top-10">
                           {[...Array(testimonial.rating)].map((_, i) => (
                             <svg
                               key={i}
@@ -1623,12 +1662,12 @@ export default function Home() {
                           ))}
                         </div>
                       </div>
-                      <div className="relative -top-10">
+                      <div className="relative -top-0">
                         <p className="primary-font text-base md:text-[18px] leading-relaxed flex-grow">
                           {testimonial.text}
                         </p>
                       </div>
-                      <div className="absolute bottom-4">
+                      <div className="mt-8">
                         <p className="primary-font text-base md:text-[18px] font-semibold">
                           {testimonial.name}
                         </p>
