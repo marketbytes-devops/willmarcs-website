@@ -1,17 +1,16 @@
-# BEGIN Custom Next.js Rule
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteRule ^csr-video-production(/.*)?$ - [L]
+RewriteRule ^csr-video-production/?$ /csr-video-production/index.html [L]
+RewriteRule ^csr-video-production/(.*)$ /csr-video-production/$1 [L]
 </IfModule>
-# END Custom Next.js Rule
 
-# BEGIN WordPress
 <IfModule mod_rewrite.c>
+RewriteEngine On
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 RewriteBase /
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/csr-video-production/
 RewriteRule . /index.php [L]
 </IfModule>
-# END WordPress

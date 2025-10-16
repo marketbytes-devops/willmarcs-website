@@ -34,9 +34,6 @@ export const metadata = {
     apple:
       "https://wilmarcs.com/wp-content/uploads/2024/11/Wilmarcs-Icon_Black-fotor-20241030162914-200x200.png",
   },
-  alternates: {
-    canonical: "https://wilmarcs.com/csr-video-production",
-  },
 };
 
 export default function RootLayout({ children }) {
@@ -81,6 +78,18 @@ export default function RootLayout({ children }) {
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-ERHGCG9C0N');
+          `}
+        </Script>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=AW-16874818711"
+        />
+        <Script id="google-ads" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-16874818711');
           `}
         </Script>
       </head>

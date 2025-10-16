@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Open_Sans, Philosopher } from "next/font/google";
 import gsap from "gsap";
 import { ScrollTrigger, ScrollToPlugin } from "gsap/all";
 import Button from "@/components/Button";
@@ -17,20 +16,6 @@ import Instagram from "@/components/Icons/Instagram";
 import LinkedIn from "@/components/Icons/Likedin";
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-
-const openSans = Open_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "600", "700", "800"],
-  style: ["normal", "italic"],
-  variable: "--font-open-sans",
-});
-
-const philosopher = Philosopher({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-philosopher",
-});
 
 export default function ThankYou() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -253,7 +238,7 @@ export default function ThankYou() {
           </div>
         </nav>
         <div
-          className={`h-screen flex flex-col items-center justify-center ${openSans.variable} ${philosopher.variable}`}
+          className="h-screen flex flex-col items-center justify-center"
         >
           <div className="text-center p-6 sm:p-10 rounded-xl shadow-lg max-w-md w-full">
             <h1 className="secondary-font text-xl md:text-4xl text-white font-bold mb-4">
