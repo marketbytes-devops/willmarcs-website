@@ -33,7 +33,7 @@ const Form = () => {
 
       console.log("Email sent successfully:", response.status, response.text);
       reset();
-      router.push("/thank-you"); 
+      router.push("/csr-video-production/thank-you"); 
     } catch (error) {
       console.error("Failed to send email:", error);
       alert("Failed to send enquiry. Please try again.");

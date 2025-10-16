@@ -33,7 +33,7 @@ const ModalForm = ({ isOpen, onClose }) => {
 
       console.log("Email sent successfully:", response.status, response.text);
       reset();
-      router.push("/thank-you");
+      router.push("/csr-video-production/thank-you");
       onClose();
     } catch (error) {
       console.error("Failed to send email:", error);
