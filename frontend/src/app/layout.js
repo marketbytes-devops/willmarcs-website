@@ -35,7 +35,7 @@ export const metadata = {
       "https://wilmarcs.com/wp-content/uploads/2024/11/Wilmarcs-Icon_Black-fotor-20241030162914-200x200.png",
   },
   alternates: {
-    canonical: "https://wilmarcs.com/csr-videos-wilmarcs",
+    canonical: "https://wilmarcs.com/csr-video-production",
   },
 };
 
