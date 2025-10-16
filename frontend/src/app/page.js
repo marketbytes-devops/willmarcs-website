@@ -485,7 +485,9 @@ export default function Home() {
         <nav className="py-4 border border-b border-x-0 border-t-0 border-white/50 z-10 relative">
           <div className="container flex items-center justify-between">
             <div className="flex-shrink-0">
+              <a href="https://www.wilmarcs.com/" className="decoration-none">
               <Image src={logo} alt="Wilmarcs Logo" width={140} height={40} />
+              </a>
             </div>
             <ul className="hidden sm:flex justify-center gap-14 flex-grow">
               <li className="group relative flex items-center justify-center">
