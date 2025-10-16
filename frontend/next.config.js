@@ -1,25 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export', 
-  basePath: '/csr-videos-wilmarcs',
-  
+  // output: 'export', 
+  // basePath: '/csr-video-production',
   images: {
     unoptimized: true 
   },
-
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.(mp4|webm)$/,
-      use: {
-        loader: 'file-loader',
-        options: {
-          publicPath: '/_next',
-          name: 'static/media/[name].[hash].[ext]',
-        },
-      },
-    });
-    return config;
-  },
+  // eslint: {
+  //   ignoreDuringBuilds: true,
+  // },
 };
 
 module.exports = nextConfig;

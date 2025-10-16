@@ -1,10 +1,12 @@
 # BEGIN Custom Next.js Rule
-RewriteRule ^landing(/.*)?$ - [L]
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^csr-video-production(/.*)?$ - [L]
+</IfModule>
 # END Custom Next.js Rule
 
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
-RewriteEngine On
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 RewriteBase /
 RewriteRule ^index\.php$ - [L]
@@ -12,4 +14,4 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.php [L]
 </IfModule>
-# END WordPress
+# END WordPress

@@ -1,10 +1,9 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
-import { ScrollTrigger, ScrollToPlugin } from "gsap/all";
+import { ScrollTrigger } from "gsap/all";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -79,7 +78,7 @@ const aboutCount = [
   },
 ];
 
-import himalayaImage from "@/assets/images/himalaya-wellness.jpg";
+import himalayaImage from "@/assets/images/himalaya-wellness.png";
 import akshayaPathraImage from "@/assets/images/akshaya-pathra.png";
 
 import ourWorkImage1 from "@/assets/images/our-work-img-1.png";
@@ -100,7 +99,8 @@ const accordianDifference = [
   {
     id: 1,
     icon: differenceIcon1,
-    differenceVideo: "/videos/Cinema-Quality-Corporate-Speed.mp4",
+    differenceVideo:
+      "https://wilmarcs.com/csr-video-production/videos/Cinema-Quality-Corporate-Speed.mp4",
     title: "Cinema Quality. Corporate Speed.",
     description: "Cinema Quality. Corporate Speed.",
     caption: "Films that look like cinema, delivered at the pace of business",
@@ -108,7 +108,8 @@ const accordianDifference = [
   {
     id: 2,
     icon: differenceIcon2,
-    differenceVideo: "/videos/from-brief-to-boardrooom.mp4",
+    differenceVideo:
+      "https://wilmarcs.com/csr-video-production/videos/from-brief-to-boardrooom.mp4",
     title: "From Brief to Boardroom—Seamless Delivery",
     description: "From Brief to Boardroom—Seamless Delivery",
     caption:
@@ -117,7 +118,8 @@ const accordianDifference = [
   {
     id: 3,
     icon: differenceIcon3,
-    differenceVideo: "/videos/trusted-by-global-brands.mp4",
+    differenceVideo:
+      "https://wilmarcs.com/csr-video-production/videos/trusted-by-global-brands.mp4",
     title: "Trusted by Global Brands, Tailored for Local CSR Stories",
     description: "Trusted by Global Brands, Tailored for Local CSR Stories",
     caption:
@@ -126,7 +128,7 @@ const accordianDifference = [
   {
     id: 4,
     icon: differenceIcon4,
-    differenceVideo: "/videos/Pan.mp4",
+    differenceVideo: "https://wilmarcs.com/csr-video-production/videos/Pan.mp4",
     title: "Pan-India Execution, Global Standards",
     description: "Pan-India Execution, Global Standards",
     caption: "Crews across 20+ states, remote/forest/coastal shoots.",
@@ -134,7 +136,8 @@ const accordianDifference = [
   {
     id: 5,
     icon: differenceIcon5,
-    differenceVideo: "/videos/Faster-Cuts.mp4",
+    differenceVideo:
+      "https://wilmarcs.com/csr-video-production/videos/Faster-Cuts.mp4",
     title: "Faster Cuts, Smarter Workflows",
     description: "Faster Cuts, Smarter Workflows",
     caption:
@@ -143,7 +146,8 @@ const accordianDifference = [
   {
     id: 6,
     icon: differenceIcon6,
-    differenceVideo: "/videos/Compliance.mp4",
+    differenceVideo:
+      "https://wilmarcs.com/csr-video-production/videos/Compliance.mp4",
     title: "Compliance & Consent Assured",
     description: "Compliance & Consent Assured",
     caption:
@@ -158,7 +162,7 @@ import whatWeDoIcon3 from "@/assets/svg/Languages-accessibility.svg";
 import whatWeDoIcon4 from "@/assets/svg/Report-ready.svg";
 import whatWeDoIcon5 from "@/assets/svg/thumbnail-kit.svg";
 
-import himalayaWellnessLogo from "@/assets/images/since-1930.jpg";
+import himalayaWellnessLogo from "@/assets/images/since-1930.png";
 import tescoLogo from "@/assets/images/tesco.png";
 import akshayPathraLogo from "@/assets/images/akshya.png";
 
@@ -200,6 +204,7 @@ import Youtube from "@/components/Icons/Youtube";
 import Progress from "@/components/Progess";
 import Instagram from "@/components/Icons/Instagram";
 import LinkedIn from "@/components/Icons/Likedin";
+import ModalForm from "@/components/ModalForm/ModalForm";
 
 const faqs = [
   {
@@ -228,16 +233,11 @@ const faqs = [
   },
 ];
 
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
   const router = useRouter();
-  const aboutRef = useRef(null);
-  const workRef = useRef(null);
-  const differenceRef = useRef(null);
-  const solutionsRef = useRef(null);
   const aboutCountRef = useRef(null);
-  const ReadyToRollRef = useRef(null);
 
   const aboutVideoRef = useRef(null);
   const himalayaVideoRef = useRef(null);
@@ -245,21 +245,66 @@ export default function Home() {
   const workVideosRef = useRef([]);
   const differenceVideosRef = useRef([]);
 
-  const [autoPlayWorkIndex, setAutoPlayWorkIndex] = useState(-1);
-  const [isSequentialPlaying, setIsSequentialPlaying] = useState(false);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [playingVideo, setPlayingVideo] = useState(null);
   const [playingHimalayaVideo, setPlayingHimalayaVideo] = useState(false);
   const [playingAkshayaVideo, setPlayingAkshayaVideo] = useState(false);
 
-  const [shouldAutoPlayAbout, setShouldAutoPlayAbout] = useState(false);
-  const [shouldAutoPlayHimalaya, setShouldAutoPlayHimalaya] = useState(false);
-  const [shouldAutoPlayAkshaya, setShouldAutoPlayAkshaya] = useState(false);
-
   const [openIndex, setOpenIndex] = useState(0);
+
+  // **UPDATED: HOVER-BASED STATES FOR WORK SECTION**
+  const [hoveredWorkIndex, setHoveredWorkIndex] = useState(null);
+  const [autoPlayVideos, setAutoPlayVideos] = useState({
+    himalaya: false,
+    akshaya: false,
+    about: false,
+    works: false,
+  });
+  const [currentActiveSection, setCurrentActiveSection] = useState(null);
+
+  // **NEW: WORK SECTION HOVER HANDLERS**
+  const handleWorkHover = (index) => {
+    // Pause all work videos first
+    workVideosRef.current.forEach((video, i) => {
+      if (video) pauseYouTubeVideo(video);
+    });
+
+    // Play only the hovered video
+    setHoveredWorkIndex(index);
+    setTimeout(() => {
+      if (workVideosRef.current[index]) {
+        playYouTubeVideo(workVideosRef.current[index]);
+      }
+    }, 100);
+  };
+
+  const handleWorkLeave = () => {
+    // Pause all work videos on mouse leave
+    workVideosRef.current.forEach((video) => {
+      if (video) pauseYouTubeVideo(video);
+    });
+    setHoveredWorkIndex(null);
+  };
+
+  // **SLOWER SMOOTH SCROLL - 2.5 SECONDS**
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offsetTop = 80;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - offsetTop;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+    setIsMenuOpen(false);
+  };
 
   const toggleAccordion = (id) => {
     if (openAccordion === id) {
@@ -287,29 +332,13 @@ export default function Home() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const scrollToSection = (ref, sectionId) => {
-    if (ref.current) {
-      gsap.to(window, {
-        scrollTo: {
-          y: ref.current,
-          offsetY: 80,
-        },
-        duration: 1,
-        ease: "power2.out",
-      });
-      router.push(`/#${sectionId}`, { scroll: false });
-    }
-    setIsMenuOpen(false);
-  };
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   const playVideo = (index, videoUrl) => {
+    pauseAllVideos();
     setPlayingVideo(index);
-    setIsSequentialPlaying(false);
-    setAutoPlayWorkIndex(-1);
   };
 
   const stopVideo = () => {
@@ -323,185 +352,40 @@ export default function Home() {
     return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : "";
   };
 
-  const startSequentialAutoPlay = () => {
-    if (
-      isSequentialPlaying ||
-      workRef.current.getBoundingClientRect().top > window.innerHeight
-    )
-      return;
-
-    setIsSequentialPlaying(true);
-    setAutoPlayWorkIndex(0);
+  // **VIDEO CONTROL FUNCTIONS**
+  const playYouTubeVideo = (iframe) => {
+    const videoSrc = iframe.src;
+    if (!videoSrc.includes("autoplay=1&mute=1")) {
+      const videoId = videoSrc.split("/")[4];
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+    }
+    iframe.contentWindow?.postMessage(
+      '{"event":"command","func":"playVideo","args":""}',
+      "*"
+    );
   };
 
-  const nextSequentialVideo = () => {
-    const nextIndex = autoPlayWorkIndex + 1;
-    if (nextIndex < 6) {
-      setAutoPlayWorkIndex(nextIndex);
-    } else {
-      setIsSequentialPlaying(false);
-      setAutoPlayWorkIndex(-1);
-    }
+  const pauseYouTubeVideo = (iframe) => {
+    iframe.contentWindow?.postMessage(
+      '{"event":"command","func":"pauseVideo","args":""}',
+      "*"
+    );
   };
 
-  const autoPlayVideosOnScroll = useCallback(() => {
-    if (aboutVideoRef.current && !playingVideo) {
-      const rect = aboutVideoRef.current.getBoundingClientRect();
-      const isInView =
-        rect.top < window.innerHeight * 0.7 &&
-        rect.bottom > window.innerHeight * 0.3;
-
-      if (isInView) {
-        setShouldAutoPlayAbout(true);
-      } else {
-        setShouldAutoPlayAbout(false);
-      }
-    }
-
-    if (himalayaVideoRef.current && !playingHimalayaVideo) {
-      const rect = himalayaVideoRef.current.getBoundingClientRect();
-      const isInView =
-        rect.top < window.innerHeight * 0.7 &&
-        rect.bottom > window.innerHeight * 0.3;
-
-      if (isInView) {
-        setShouldAutoPlayHimalaya(true);
-      } else {
-        setShouldAutoPlayHimalaya(false);
-      }
-    }
-
-    if (akshayaVideoRef.current && !playingAkshayaVideo) {
-      const rect = akshayaVideoRef.current.getBoundingClientRect();
-      const isInView =
-        rect.top < window.innerHeight * 0.7 &&
-        rect.bottom > window.innerHeight * 0.3;
-
-      if (isInView) {
-        setShouldAutoPlayAkshaya(true);
-      } else {
-        setShouldAutoPlayAkshaya(false);
-      }
-    }
-
-    if (workRef.current) {
-      const rect = workRef.current.getBoundingClientRect();
-      const isWorkInView =
-        rect.top < window.innerHeight * 0.8 &&
-        rect.bottom > window.innerHeight * 0.2;
-      if (isWorkInView && autoPlayWorkIndex === -1 && !isSequentialPlaying) {
-        setTimeout(startSequentialAutoPlay, 500);
-      }
-    }
-
-    differenceVideosRef.current.forEach((videoRef, index) => {
-      if (videoRef) {
-        const rect = videoRef.getBoundingClientRect();
-        const isInView =
-          rect.top < window.innerHeight * 0.7 &&
-          rect.bottom > window.innerHeight * 0.3;
-        if (isInView && openAccordion === index + 1) {
-          videoRef.play();
-        } else if (!isInView && openAccordion === index + 1) {
-          videoRef.pause();
-        }
-      }
+  const pauseAllVideos = () => {
+    [aboutVideoRef, himalayaVideoRef, akshayaVideoRef].forEach((ref) => {
+      if (ref.current) pauseYouTubeVideo(ref.current);
     });
-  }, [
-    playingVideo,
-    playingHimalayaVideo,
-    playingAkshayaVideo,
-    autoPlayWorkIndex,
-    isSequentialPlaying,
-    openAccordion,
-  ]);
+    workVideosRef.current.forEach((video) => {
+      if (video) pauseYouTubeVideo(video);
+    });
+    setPlayingVideo(null);
+    setPlayingHimalayaVideo(false);
+    setPlayingAkshayaVideo(false);
+  };
 
+  // **SINGLE useEffect WITH EMPTY DEPENDENCIES**
   useEffect(() => {
-    gsap.fromTo(
-      aboutRef.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: aboutRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-
-    gsap.fromTo(
-      workRef.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: workRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-
-    gsap.fromTo(
-      differenceRef.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: differenceRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-
-    gsap.fromTo(
-      solutionsRef.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: solutionsRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-
-    gsap.fromTo(
-      ReadyToRollRef.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ReadyToRollRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-
     if (aboutCountRef.current) {
       const counters = aboutCountRef.current.querySelectorAll(".counter");
       counters.forEach((counter, index) => {
@@ -535,130 +419,58 @@ export default function Home() {
       });
     }
 
-    const handleScroll = () => {
-      autoPlayVideosOnScroll();
-    };
+    const sections = [
+      { id: "about", videoKey: "about", element: aboutVideoRef },
+      { id: "himalaya-case", videoKey: "himalaya", element: himalayaVideoRef },
+      { id: "akshaya-case", videoKey: "akshaya", element: akshayaVideoRef },
+    ];
 
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
+    const triggers = sections.map(({ id, videoKey, element }) =>
+      ScrollTrigger.create({
+        trigger: `#${id}`,
+        start: "top 60%",
+        end: "bottom 40%",
+        onEnter: () => {
+          pauseAllVideos();
+          if (element.current) playYouTubeVideo(element.current);
+          setAutoPlayVideos((prev) => ({ ...prev, [videoKey]: true }));
+        },
+        onLeave: () => {
+          setAutoPlayVideos((prev) => ({ ...prev, [videoKey]: false }));
+          if (element.current) pauseYouTubeVideo(element.current);
+        },
+        onEnterBack: () => {
+          pauseAllVideos();
+          if (element.current) playYouTubeVideo(element.current);
+          setAutoPlayVideos((prev) => ({ ...prev, [videoKey]: true }));
+        },
+        onLeaveBack: () => {
+          setAutoPlayVideos((prev) => ({ ...prev, [videoKey]: false }));
+          if (element.current) pauseYouTubeVideo(element.current);
+        },
+      })
+    );
 
-    const handleMessage = (event) => {
-      if (event.origin !== "https://www.youtube.com") return;
-      const data = JSON.parse(event.data);
-      if (
-        data.event === "onStateChange" &&
-        data.info === 0 &&
-        autoPlayWorkIndex >= 0 &&
-        workVideosRef.current[autoPlayWorkIndex]
-      ) {
-        const currentIndex = parseInt(
-          workVideosRef.current[autoPlayWorkIndex].dataset.index
-        );
-        if (autoPlayWorkIndex === currentIndex) {
-          nextSequentialVideo();
-        }
-      }
-    };
-    window.addEventListener("message", handleMessage);
+    const workTrigger = ScrollTrigger.create({
+      trigger: "#works",
+      start: "top 60%",
+      end: "bottom 40%",
+      onEnter: () => {
+        setAutoPlayVideos((prev) => ({ ...prev, works: true }));
+      },
+      onLeave: () => {
+        setAutoPlayVideos((prev) => ({ ...prev, works: false }));
+        workVideosRef.current.forEach((video) => {
+          if (video) pauseYouTubeVideo(video);
+        });
+      },
+    });
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("message", handleMessage);
+      triggers.forEach((trigger) => trigger.kill());
+      workTrigger.kill();
     };
   }, []);
-
-  useEffect(() => {
-    if (aboutVideoRef.current && shouldAutoPlayAbout && !playingVideo) {
-      const iframe = aboutVideoRef.current;
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        "*"
-      );
-      setPlayingVideo("about");
-
-      const timer = setTimeout(() => {
-        if (playingVideo === "about") {
-          iframe.contentWindow.postMessage(
-            '{"event":"command","func":"pauseVideo","args":""}',
-            "*"
-          );
-          setPlayingVideo(null);
-          setShouldAutoPlayAbout(false);
-        }
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [shouldAutoPlayAbout, playingVideo]);
-
-  useEffect(() => {
-    if (
-      himalayaVideoRef.current &&
-      shouldAutoPlayHimalaya &&
-      !playingHimalayaVideo
-    ) {
-      const iframe = himalayaVideoRef.current;
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        "*"
-      );
-      setPlayingHimalayaVideo(true);
-
-      const timer = setTimeout(() => {
-        if (playingHimalayaVideo) {
-          iframe.contentWindow.postMessage(
-            '{"event":"command","func":"pauseVideo","args":""}',
-            "*"
-          );
-          setPlayingHimalayaVideo(false);
-          setShouldAutoPlayHimalaya(false);
-        }
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [shouldAutoPlayHimalaya, playingHimalayaVideo]);
-
-  useEffect(() => {
-    if (
-      akshayaVideoRef.current &&
-      shouldAutoPlayAkshaya &&
-      !playingAkshayaVideo
-    ) {
-      const iframe = akshayaVideoRef.current;
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        "*"
-      );
-      setPlayingAkshayaVideo(true);
-
-      const timer = setTimeout(() => {
-        if (playingAkshayaVideo) {
-          iframe.contentWindow.postMessage(
-            '{"event":"command","func":"pauseVideo","args":""}',
-            "*"
-          );
-          setPlayingAkshayaVideo(false);
-          setShouldAutoPlayAkshaya(false);
-        }
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [shouldAutoPlayAkshaya, playingAkshayaVideo]);
-
-  useEffect(() => {
-    if (playingVideo !== null && playingVideo !== "about") {
-      setShouldAutoPlayAbout(false);
-    }
-    if (playingHimalayaVideo === false) {
-      setShouldAutoPlayHimalaya(false);
-    }
-    if (playingAkshayaVideo === false) {
-      setShouldAutoPlayAkshaya(false);
-    }
-  }, [playingVideo, playingHimalayaVideo, playingAkshayaVideo]);
 
   return (
     <>
@@ -678,39 +490,36 @@ export default function Home() {
             <ul className="hidden sm:flex justify-center gap-14 flex-grow">
               <li className="group relative flex items-center justify-center">
                 <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
-                <Link
-                  href="/#works"
-                  onClick={() => scrollToSection(workRef, "works")}
-                  className="relative z-10 primary-font text-white text-md font-semibold"
+                <button
+                  onClick={() => scrollToSection("works")}
+                  className="relative z-10 primary-font text-white text-md font-semibold border-none bg-transparent cursor-pointer hover:text-[#4CAF5080] transition-colors duration-300"
                 >
                   Works
-                </Link>
+                </button>
               </li>
               <li className="group relative flex items-center justify-center">
                 <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
-                <Link
-                  href="/#difference"
-                  onClick={() => scrollToSection(differenceRef, "difference")}
-                  className="relative z-10 primary-font text-white text-md font-semibold"
+                <button
+                  onClick={() => scrollToSection("difference")}
+                  className="relative z-10 primary-font text-white text-md font-semibold border-none bg-transparent cursor-pointer hover:text-[#4CAF5080] transition-colors duration-300"
                 >
                   Difference
-                </Link>
+                </button>
               </li>
               <li className="group relative flex items-center justify-center">
                 <div className="absolute -left-[18px] -top-[5px] w-8 h-8 rounded-full bg-transparent group-hover:bg-[#4CAF5080] -z-10"></div>
-                <Link
-                  href="/#solutions"
-                  onClick={() => scrollToSection(solutionsRef, "solutions")}
-                  className="relative z-10 primary-font text-white text-md font-semibold"
+                <button
+                  onClick={() => scrollToSection("solutions")}
+                  className="relative z-10 primary-font text-white text-md font-semibold border-none bg-transparent cursor-pointer hover:text-[#4CAF5080] transition-colors duration-300"
                 >
                   Solutions
-                </Link>
+                </button>
               </li>
             </ul>
             <div className="hidden sm:flex flex-shrink-0">
               <Button
                 text="Talk to a Producer"
-                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
+                onClick={() => setIsModalOpen(true)}
                 bgColor="rgba(255, 255, 255, 0.3)"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -768,38 +577,33 @@ export default function Home() {
             </div>
             <ul className="flex flex-col items-center justify-center h-auto space-y-8">
               <li>
-                <Link
-                  href="/#works"
-                  onClick={() => scrollToSection(workRef, "works")}
-                  className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
+                <button
+                  onClick={() => scrollToSection("works")}
+                  className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080] transition-colors duration-300"
                 >
                   Works
-                </Link>
+                </button>
               </li>
               <li>
-                <Link
-                  href="/#difference"
-                  onClick={() => scrollToSection(differenceRef, "difference")}
-                  className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
+                <button
+                  onClick={() => scrollToSection("difference")}
+                  className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080] transition-colors duration-300"
                 >
                   Difference
-                </Link>
+                </button>
               </li>
               <li>
-                <Link
-                  href="/#solutions"
-                  onClick={() => scrollToSection(solutionsRef, "solutions")}
-                  className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080]"
+                <button
+                  onClick={() => scrollToSection("solutions")}
+                  className="primary-font text-white text-lg font-semibold hover:text-[#4CAF5080] transition-colors duration-300"
                 >
                   Solutions
-                </Link>
+                </button>
               </li>
               <li>
                 <Button
                   text="Talk to a Producer"
-                  onClick={() =>
-                    scrollToSection(ReadyToRollRef, "ready-to-roll")
-                  }
+                  onClick={() => setIsModalOpen(true)}
                   bgColor="rgba(255, 255, 255, 0.3)"
                   fontSize="lg"
                   textColor="#FFFFFF"
@@ -811,7 +615,7 @@ export default function Home() {
             </ul>
           </div>
         </nav>
-        <div className="container flex flex-col justify-center items-start h-[calc(52vh-80px)] sm:h-[calc(100vh-80px)] text-white md:w-1/2">
+        <div className="container flex flex-col justify-center items-start h-[calc(55vh-80px)] sm:h-[calc(100vh-80px)] text-white md:w-1/2">
           <p className="secondary-font text-xl md:text-4xl font-bold mb-2">
             <span className="bg-[#4CAF50] px-1">Stories that inspire.</span>
           </p>
@@ -826,7 +630,7 @@ export default function Home() {
           </p>
           <Button
             text="Start Your Project"
-            onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
+            onClick={() => setIsModalOpen(true)}
             bgColor="rgba(255, 255, 255)"
             fontSize="md"
             textColor="#000"
@@ -837,7 +641,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="relative mt-[48vh] sm:mt-[124vh] bg-white z-50">
+      <main className="relative mt-[55vh] sm:mt-[124vh] bg-white z-50">
         <div
           className="hidden sm:block absolute w-full -top-28 left-0"
           style={{
@@ -860,7 +664,7 @@ export default function Home() {
             titleClass="mb-6 text-black text-center sm:text-left"
             description={false}
           />
-          <div className="grid grid-cols-1 sm:grid-cols-6">
+          <div className="grid grid-cols-3 sm:grid-cols-6">
             {international.map((client, index) => (
               <div
                 className="group client-card border border-[#D6D6D6] p-8 flex justify-center items-center"
@@ -883,7 +687,6 @@ export default function Home() {
           id="about"
           className="container min-h-auto pt-6 sm:pt-16 relative z-10"
           style={{ backgroundColor: "#ffffff" }}
-          ref={aboutRef}
         >
           <div className="flex flex-col sm:flex-row w-full gap-8">
             <div className="w-full sm:w-[45%]">
@@ -892,39 +695,44 @@ export default function Home() {
                 titleClass="mb-6 text-black text-center sm:text-left"
                 description={false}
               />
-              <div className="relative w-full h-[300px] rounded-xl overflow-hidden">
-                {playingVideo === "about" ? (
+              <div
+                id="about"
+                className="relative w-full h-[300px] rounded-xl overflow-hidden"
+              >
+                {autoPlayVideos.about || playingVideo === "about" ? (
                   <div className="relative w-full h-full">
                     <iframe
                       ref={aboutVideoRef}
-                      src="https://www.youtube.com/embed/gwkQYgElMtQ?autoplay=0&mute=1"
+                      src="https://www.youtube.com/embed/gwkQYgElMtQ?autoplay=1&mute=1&loop=1&playlist=gwkQYgElMtQ"
                       title="See the work in 60 seconds"
                       className="w-full h-full"
                       frameBorder="0"
                       allow="autoplay; encrypted-media"
                       allowFullScreen
                     />
-                    <button
-                      onClick={() => setPlayingVideo(null)}
-                      className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
-                      aria-label="Close video"
-                    >
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
+                    {playingVideo === "about" && (
+                      <button
+                        onClick={() => setPlayingVideo(null)}
+                        className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
+                        aria-label="Close video"
                       >
-                        <path
-                          d="M18 6L6 18M6 6L18 18"
-                          stroke="white"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M18 6L6 18M6 6L18 18"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <>
@@ -934,12 +742,12 @@ export default function Home() {
                       alt="Transforming Ideas Into Visual Excellence"
                       width="auto"
                       height={400}
-                      onClick={() => setPlayingVideo("about")}
+                      onClick={() => playVideo("about", "")}
                       aria-label="Play video"
                     />
                     <div
                       className="cursor-pointer absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-70 rounded-xl"
-                      onClick={() => setPlayingVideo("about")}
+                      onClick={() => playVideo("about", "")}
                       aria-label="Play video"
                     ></div>
                   </>
@@ -963,7 +771,10 @@ export default function Home() {
                 titleClass="mb-3 text-black text-center sm:text-left"
                 descriptionClass="text-[#555555] text-center sm:text-left"
               />
-              <div ref={aboutCountRef} className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+              <div
+                ref={aboutCountRef}
+                className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6"
+              >
                 {aboutCount.map((count) => (
                   <div
                     className="hover:bg-[#4CAF50] transition-all duration-300 hover:text-white border border-[#D6D6D6] p-8 flex flex-col justify-center items-center rounded-3xl space-y-4"
@@ -982,9 +793,7 @@ export default function Home() {
                 <Button
                   text="Start Your Project"
                   icon={true}
-                  onClick={() =>
-                    scrollToSection(ReadyToRollRef, "ready-to-roll")
-                  }
+                  onClick={() => setIsModalOpen(true)}
                   bgColor="#000"
                   fontSize="md"
                   textColor="#FFFFFF"
@@ -1011,41 +820,46 @@ export default function Home() {
               />
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center w-full gap-8 rounded-xl p-4 sm:p-8 bg-[#1B1B1BB2]">
+            <div
+              id="himalaya-case"
+              className="flex flex-col sm:flex-row items-center justify-center w-full gap-8 rounded-xl p-4 sm:p-8 bg-[#1B1B1BB2]"
+            >
               <div className="w-full sm:w-[45%]">
                 <div className="relative w-full h-full bg-white rounded-xl group">
-                  {playingHimalayaVideo ? (
+                  {autoPlayVideos.himalaya || playingHimalayaVideo ? (
                     <div className="relative w-full h-full">
                       <iframe
                         ref={himalayaVideoRef}
-                        src="https://www.youtube.com/embed/tzIq68pUFRU?autoplay=0&mute=1"
+                        src="https://www.youtube.com/embed/tzIq68pUFRU?autoplay=1&mute=1&loop=1&playlist=tzIq68pUFRU"
                         title="Himalaya Wellness – Mangrove Restoration Film"
                         className="w-full h-auto sm:h-[350px] rounded-xl"
                         frameBorder="0"
                         allow="autoplay"
                         allowFullScreen
                       />
-                      <button
-                        onClick={() => setPlayingHimalayaVideo(false)}
-                        className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
-                        aria-label="Close video"
-                      >
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
+                      {playingHimalayaVideo && (
+                        <button
+                          onClick={() => setPlayingHimalayaVideo(false)}
+                          className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
+                          aria-label="Close video"
                         >
-                          <path
-                            d="M18 6L6 18M6 6L18 18"
-                            stroke="white"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button>
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M18 6L6 18M6 6L18 18"
+                              stroke="white"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <>
@@ -1056,6 +870,7 @@ export default function Home() {
                         height={400}
                         className="rounded-xl transform rotate-3 transition-all duration-300 group-hover:rotate-0"
                         style={{ objectFit: "contain" }}
+                        onClick={() => playVideo("himalaya", "")}
                       />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <svg
@@ -1065,7 +880,7 @@ export default function Home() {
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
                           className="transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110 cursor-pointer"
-                          onClick={() => setPlayingHimalayaVideo(true)}
+                          onClick={() => playVideo("himalaya", "")}
                         >
                           <path
                             fillRule="evenodd"
@@ -1126,7 +941,10 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center w-full gap-8 rounded-xl p-4 sm:p-8 bg-[#1B1B1BB2]">
+            <div
+              id="akshaya-case"
+              className="flex flex-col sm:flex-row items-center justify-center w-full gap-8 rounded-xl p-4 sm:p-8 bg-[#1B1B1BB2]"
+            >
               <div className="w-full sm:w-[55%]">
                 <TitleDescription
                   title="Akshaya Patra – Nationwide Documentary (UN Showcase)"
@@ -1169,38 +987,40 @@ export default function Home() {
 
               <div className="w-full sm:w-[45%] -mt-4 sm:mt-8">
                 <div className="relative w-full h-full bg-white rounded-xl group">
-                  {playingAkshayaVideo ? (
+                  {autoPlayVideos.akshaya || playingAkshayaVideo ? (
                     <div className="relative w-full h-full">
                       <iframe
                         ref={akshayaVideoRef}
-                        src="https://www.youtube.com/embed/aVyfbWWIK6w?autoplay=0&mute=1"
+                        src="https://www.youtube.com/embed/aVyfbWWIK6w?autoplay=1&mute=1&loop=1&playlist=aVyfbWWIK6w"
                         title="Akshaya Patra – Nationwide Documentary (UN Showcase)"
                         className="w-full h-auto sm:h-[350px] rounded-xl"
                         frameBorder="0"
                         allow="autoplay; encrypted-media"
                         allowFullScreen
                       />
-                      <button
-                        onClick={() => setPlayingAkshayaVideo(false)}
-                        className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
-                        aria-label="Close video"
-                      >
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
+                      {playingAkshayaVideo && (
+                        <button
+                          onClick={() => setPlayingAkshayaVideo(false)}
+                          className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
+                          aria-label="Close video"
                         >
-                          <path
-                            d="M18 6L6 18M6 6L18 18"
-                            stroke="white"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button>
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M18 6L6 18M6 6L18 18"
+                              stroke="white"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <>
@@ -1211,6 +1031,7 @@ export default function Home() {
                         width="auto"
                         height={400}
                         style={{ objectFit: "contain" }}
+                        onClick={() => playVideo("akshaya", "")}
                       />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <svg
@@ -1220,7 +1041,7 @@ export default function Home() {
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
                           className="transition-all duration-300 opacity-70 group-hover:opacity-100 group-hover:scale-110 cursor-pointer"
-                          onClick={() => setPlayingAkshayaVideo(true)}
+                          onClick={() => playVideo("akshaya", "")}
                         >
                           <path
                             fillRule="evenodd"
@@ -1246,7 +1067,7 @@ export default function Home() {
                 text="Start Your Project"
                 icon={true}
                 isIconLeft={true}
-                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
+                onClick={() => setIsModalOpen(true)}
                 bgColor="#4CAF50"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -1257,12 +1078,10 @@ export default function Home() {
             </div>
           </div>
         </section>
-
         <section
+          id="works"
           className="min-h-auto relative z-10"
           style={{ backgroundColor: "#F6EDD9" }}
-          id="works"
-          ref={workRef}
         >
           <div className="container py-4 sm:py-16 space-y-4 sm:space-y-16">
             <div className="w-full">
@@ -1273,7 +1092,10 @@ export default function Home() {
                 descriptionClass="text-black text-center max-w-full sm:max-w-xl mx-auto"
               />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"
+              onMouseLeave={handleWorkLeave} 
+            >
               {[
                 {
                   image: ourWorkImage1,
@@ -1312,57 +1134,34 @@ export default function Home() {
                   videoUrl: "https://youtu.be/7cXdx2Tc75s",
                 },
               ].map((item, index) => {
-                const isAutoPlaying = autoPlayWorkIndex === index;
-                const isClickedPlaying = playingVideo === index;
-                const isPlaying = isAutoPlaying || isClickedPlaying;
+                const videoId = item.videoUrl.match(
+                  /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&]+)/
+                )?.[1];
+                const isHovered = hoveredWorkIndex === index;
+                const isPlaying = playingVideo === index || isHovered;
 
                 return (
                   <div
                     key={index}
-                    className="relative w-full p-3 bg-white rounded-xl group hover:shadow-xl transition-all duration-300 border border-gray-300"
+                    className={`relative w-full bg-white rounded-xl group hover:shadow-xl transition-all duration-300 border border-gray-300 ${
+                      isHovered
+                        ? "shadow-2xl"
+                        : ""
+                    }`}
+                    onMouseEnter={() => handleWorkHover(index)}
                   >
                     <div className="relative w-auto h-[300px] rounded-xl overflow-hidden">
                       {isPlaying ? (
                         <div className="relative w-full h-full">
                           <iframe
-                            ref={(el) => {
-                              workVideosRef.current[index] = el;
-                              if (el) el.dataset.index = index;
-                            }}
-                            src={`${getYouTubeEmbedUrl(
-                              item.videoUrl
-                            )}&autoplay=1&mute=1&loop=1&playlist=${
-                              item.videoUrl.match(
-                                /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&]+)/
-                              )?.[1]
-                            }`}
+                            ref={(el) => (workVideosRef.current[index] = el)}
+                            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`}
                             title={item.title}
-                            className="w-full h-full"
+                            className="w-full h-full rounded-xl"
                             frameBorder="0"
                             allow="autoplay; encrypted-media"
                             allowFullScreen
                           />
-                          <button
-                            onClick={stopVideo}
-                            className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-black/90 transition-all duration-300"
-                            aria-label="Close video"
-                          >
-                            <svg
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M18 6L6 18M6 6L18 18"
-                                stroke="white"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          </button>
                         </div>
                       ) : (
                         <>
@@ -1405,7 +1204,7 @@ export default function Home() {
                         </>
                       )}
                     </div>
-                    <div className="py-4">
+                    <div className="py-4 px-3">
                       <h3 className="primary-font text-base md:text-[18px] font-bold">
                         {item.title}
                       </h3>
@@ -1421,7 +1220,7 @@ export default function Home() {
               <Button
                 text="Start Your Project"
                 icon={true}
-                onClick={() => scrollToSection(ReadyToRollRef, "ready-to-roll")}
+                onClick={() => setIsModalOpen(true)}
                 bgColor="#000"
                 fontSize="md"
                 textColor="#FFFFFF"
@@ -1434,9 +1233,8 @@ export default function Home() {
         </section>
 
         <section
-          className="container py-6 sm:py-16 min-h-auto relative z-10"
           id="difference"
-          ref={differenceRef}
+          className="container py-6 sm:py-16 min-h-auto relative z-10"
         >
           <div className="w-full">
             <TitleDescription
@@ -1445,8 +1243,81 @@ export default function Home() {
               description={false}
             />
           </div>
-
-          <div className="flex flex-col sm:flex-row w-full">
+          <div className="sm:hidden flex flex-col w-full space-y-4">
+            <ul className="space-y-4">
+              {accordianDifference.map((item) => (
+                <li
+                  key={item.id}
+                  className={`border border-gray-300 rounded-xl p-4 cursor-pointer transition-all duration-300 ${
+                    openAccordion === item.id
+                      ? "bg-black text-white"
+                      : "bg-white text-black"
+                  }`}
+                  onClick={() => toggleAccordion(item.id)}
+                >
+                  {openAccordion === item.id ? (
+                    <div className="grid items-center space-y-2">
+                      <span className="text-2xl mr-2">
+                        <Image
+                          src={item.icon}
+                          alt={item.title}
+                          width="auto"
+                          height={400}
+                          className="w-auto h-full object-cover"
+                        />
+                      </span>
+                      <p className="flex items-center justify-between primary-font text-base md:text-[18px]">
+                        <span>{item.description}</span>
+                        <span>
+                          <svg
+                            width="93"
+                            height="16"
+                            viewBox="0 0 93 16"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M91.7566 8.70711C92.1471 8.31658 92.1471 7.68342 91.7566 7.29289L85.3926 0.928932C85.0021 0.538408 84.3689 0.538408 83.9784 0.928932C83.5879 1.31946 83.5879 1.95262 83.9784 2.34315L89.6352 8L83.9784 13.6569C83.5879 14.0474 83.5879 14.6805 83.9784 15.0711C84.3689 15.4616 85.0021 15.4616 85.3926 15.0711L91.7566 8.70711ZM0 8L0 9H91.0494V8V7L0 7L0 8Z"
+                              fill="white"
+                            />
+                          </svg>
+                        </span>
+                      </p>
+                    </div>
+                  ) : (
+                    <h3 className="primary-font text-base md:text-[18px]">
+                      {item.title}
+                    </h3>
+                  )}
+                  {openAccordion === item.id && (
+                    <div className="mt-4 space-y-3">
+                      <div className="relative overflow-hidden w-full h-auto rounded-xl">
+                        <video
+                          ref={(el) =>
+                            (differenceVideosRef.current[openAccordion - 1] = el)
+                          }
+                          src={item.differenceVideo}
+                          className="w-full h-[250px] object-cover rounded-xl"
+                          muted
+                          loop
+                          playsInline
+                        />
+                        <h4 className="w-full rounded-b-xl absolute bottom-0 p-4 bg-black/70 text-white text-sm font-semibold z-10">
+                          {item.caption}
+                        </h4>
+                      </div>
+                      <div className="pt-2">
+                        <h3 className="primary-font text-base font-semibold text-white mb-2">
+                          {item.title}
+                        </h3>
+                      </div>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="hidden sm:flex flex-col sm:flex-row w-full">
             <div className="w-full sm:w-1/2">
               <ul className="space-y-4">
                 {accordianDifference.map((item) => (
@@ -1510,13 +1381,13 @@ export default function Home() {
                         (item) => item.id === openAccordion
                       ).differenceVideo
                     }
-                    className="w-full h-full object-cover rounded-xl"
+                    className="w-full h-[350px] sm:h-full object-cover rounded-xl"
                     muted
                     loop
                     playsInline
                   />
 
-                  <h4 className="w-full rounded-b-xl absolute bottom-0 p-8 bg-black/70 text-white text-[24px] font-semibold z-10">
+                  <h4 className="w-full rounded-b-xl absolute bottom-0 p-4 sm:p-8 bg-black/70 text-white text-base sm:text-[18px] font-semibold z-10">
                     {
                       accordianDifference.find(
                         (item) => item.id === openAccordion
@@ -1530,10 +1401,9 @@ export default function Home() {
         </section>
 
         <section
+          id="solutions"
           className="relative z-10 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${whatWeDoBg.src})` }}
-          id="solutions"
-          ref={solutionsRef}
         >
           <div className="bg-black/50">
             <div className="container mx-auto py-12 sm:py-20 px-4">
@@ -1683,17 +1553,17 @@ export default function Home() {
                   <div className="relative bg-white rounded-xl shadow-sm shadow-gray-300 p-4 h-[370px] flex flex-col transition-transform duration-300 hover:shadow-md hover:shadow-gray-300 hover:-translate-y-1">
                     <div className="flex justify-between mb-3">
                       <div
-                        className="relative -top-14 w-20 h-20 border border-gray-200 rounded-full flex items-center justify-center text-4xl"
-                        style={{
-                          backgroundColor: testimonial.backgroundColor,
-                        }}
+                        className="relative -top-14 flex items-center justify-center text-4xl"
                       >
                         <Image
                           src={testimonial.logo}
                           alt={testimonial.company}
                           width={50}
                           height={50}
-                          className="object-contain rounded-full"
+                          className="w-20 h-20 p-2.5 object-contain border border-gray-200 rounded-full"
+                          style={{
+                          backgroundColor: testimonial.backgroundColor,
+                        }}
                         />
                       </div>
                       <div className="flex justify-center mb-6">
@@ -1880,11 +1750,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section
-          className="min-h-auto relative z-10"
-          id="ready-to-roll"
-          ref={ReadyToRollRef}
-        >
+        <section className="min-h-auto relative z-10">
           <div className="container py-6 sm:py-16 space-y-4 sm:space-y-16">
             <div className="flex justify-center items-center">
               <div className="flex flex-col md:flex-row bg-white shadow-md rounded-xl border border-gray-300 p-0 sm:p-6 w-full h-auto">
@@ -1918,34 +1784,30 @@ export default function Home() {
       >
         <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 justify-between items-center">
           <div className="py-6 flex items-center justify-center sm:justify-start primary-font text-[16px] text-[#0A142F] space-x-8">
-            <Link
-              href="/#about"
-              onClick={() => scrollToSection(aboutRef, "about")}
-              className="hover:text-gray-800"
+            <button
+              onClick={() => scrollToSection("about")}
+              className="hover:text-gray-800 transition-colors duration-300"
             >
               About us
-            </Link>
-            <Link
-              href="/#difference"
-              onClick={() => scrollToSection(differenceRef, "difference")}
-              className="hover:text-gray-800"
+            </button>
+            <button
+              onClick={() => scrollToSection("difference")}
+              className="hover:text-gray-800 transition-colors duration-300"
             >
               Difference
-            </Link>
-            <Link
-              href="/#works"
-              onClick={() => scrollToSection(workRef, "works")}
-              className="hover:text-gray-800"
+            </button>
+            <button
+              onClick={() => scrollToSection("works")}
+              className="hover:text-gray-800 transition-colors duration-300"
             >
               Work
-            </Link>
-            <Link
-              href="/#solutions"
-              onClick={() => scrollToSection(solutionsRef, "solutions")}
-              className="hover:text-gray-800"
+            </button>
+            <button
+              onClick={() => scrollToSection("solutions")}
+              className="hover:text-gray-800 transition-colors duration-300"
             >
               Solutions
-            </Link>
+            </button>
           </div>
           <div className="flex items-center justify-center sm:justify-end space-x-8">
             <a
@@ -1997,6 +1859,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      <ModalForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 }
