@@ -791,7 +791,7 @@ export default function Home() {
               </div>
               <div className="mt-6">
                 <Button
-                  text="Start Your Project"
+                  text="Get Your CSR Video Quote"
                   icon={true}
                   onClick={() => setIsModalOpen(true)}
                   bgColor="#000"
@@ -1061,21 +1061,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
-            <div className="text-center flex items-center justify-center">
-              <Button
-                text="Start Your Project"
-                icon={true}
-                isIconLeft={true}
-                onClick={() => setIsModalOpen(true)}
-                bgColor="#4CAF50"
-                fontSize="md"
-                textColor="#FFFFFF"
-                border="1px solid #000"
-                hoverBgColor="#FFFFFF"
-                hoverTextColor="#000"
-              />
-            </div>
           </div>
         </section>
         <section
@@ -1218,7 +1203,7 @@ export default function Home() {
             </div>
             <div className="text-center flex items-center justify-center">
               <Button
-                text="Start Your Project"
+                text="Talk to Our Creative Team"
                 icon={true}
                 onClick={() => setIsModalOpen(true)}
                 bgColor="#000"
@@ -1406,7 +1391,7 @@ export default function Home() {
           style={{ backgroundImage: `url(${whatWeDoBg.src})` }}
         >
           <div className="bg-black/50">
-            <div className="container mx-auto py-12 sm:py-20 px-4">
+            <div className="container mx-auto py-12 sm:py-16 px-4">
               <div className="w-full flex flex-col gap-6 mb-12">
                 <p className="primary-font text-md text-center sm:text-left">
                   <span className="bg-[#4CAF50] text-[#FFFFFF] px-1 uppercase">
@@ -1512,6 +1497,20 @@ export default function Home() {
                   }
                 )}
               </div>
+              <div className="text-center flex items-center justify-center mt-6 sm:mt-16">
+              <Button
+                text="Start Your Project"
+                icon={true}
+                isIconLeft={true}
+                onClick={() => setIsModalOpen(true)}
+                bgColor="#4CAF50"
+                fontSize="md"
+                textColor="#FFFFFF"
+                border="1px solid #000"
+                hoverBgColor="#FFFFFF"
+                hoverTextColor="#000"
+              />
+            </div>
             </div>
           </div>
         </section>

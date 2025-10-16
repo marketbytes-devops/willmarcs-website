@@ -56,7 +56,14 @@ export default function RootLayout({ children }) {
             })();
           `}
         </Script>
+        <Script
+          id="pixel-script-poptin"
+          src="https://cdn.popt.in/pixel.js?id=e3c618ea1250f"
+          async
+          strategy="afterInteractive"
+        />
       </head>
+
       <body className={`${openSans.variable} ${philosopher.variable}`}>
         {children}
       </body>
